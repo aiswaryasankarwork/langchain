@@ -67,8 +67,7 @@ class ClickupAPIWrapper(BaseModel):
     @root_validator()
     def validate_environment(cls, values: Dict) -> Dict:
         """Validate that api key and python package exists in environment."""
-
-        # Get all the teams that the user has access to
+        
         url = "https://api.clickup.com/api/v2/team"
 
         headers = {"Authorization": values["access_token"]}
@@ -87,58 +86,80 @@ class ClickupAPIWrapper(BaseModel):
         """
             Formats a task
         """
-        parsed = []
-        for issue in issues["issues"]:
-            key = issue["key"]
-            summary = issue["fields"]["summary"]
-            created = issue["fields"]["created"][0:10]
-            priority = issue["fields"]["priority"]["name"]
-            status = issue["fields"]["status"]["name"]
-            try:
-                assignee = issue["fields"]["assignee"]["displayName"]
-            except Exception:
-                assignee = "None"
-            rel_issues = {}
-            for related_issue in issue["fields"]["issuelinks"]:
-                if "inwardIssue" in related_issue.keys():
-                    rel_type = related_issue["type"]["inward"]
-                    rel_key = related_issue["inwardIssue"]["key"]
-                    rel_summary = related_issue["inwardIssue"]["fields"]["summary"]
-                if "outwardIssue" in related_issue.keys():
-                    rel_type = related_issue["type"]["outward"]
-                    rel_key = related_issue["outwardIssue"]["key"]
-                    rel_summary = related_issue["outwardIssue"]["fields"]["summary"]
-                rel_issues = {"type": rel_type, "key": rel_key, "summary": rel_summary}
-            parsed.append(
-                {
-                    "key": key,
-                    "summary": summary,
-                    "created": created,
-                    "assignee": assignee,
-                    "priority": priority,
-                    "status": status,
-                    "related_issues": rel_issues,
-                }
-            )
-        return parsed
+        parsed_task = {
+            'id': data['id'],
+            'name': data['name'],
+            'text_content': data['text_content'],
+            'description': data['description'],
+            'status': data['status']['status'],
+            'creator_id': data['creator']['id'],
+            'creator_username': data['creator']['username'],
+            'creator_email': data['creator']['email'],
+            'assignees': data['assignees'],
+            'watcher_username': data['watchers'][0]['username'],
+            'watcher_email': data['watchers'][0]['email'],
+            'priority': data['priority']['priority'],
+            'due_date': data['due_date'],
+            'start_date': data['start_date'],
+            'points': data['points'],
+            'team_id': data['team_id'],
+            'project_id': data['project']['id']
+        }
 
-    def parse_teams(self, data):
+        return parsed_task
+
+
+    def parse_teams(self, input_dict):
         """
             Parse appropriate content from the list of teams
         """
-        pass 
+
+        parsed_teams = {'teams': []}
+        for team in input_dict['teams']:
+            team_info = {
+                'id': team['id'],
+                'name': team['name'],
+                'members': []
+            }
+
+            for member in team['members']:
+                member_info = {
+                    'id': member['user']['id'],
+                    'username': member['user']['username'],
+                    'email': member['user']['email'],
+                    'initials': member['user']['initials']
+                }
+                team_info['members'].append(member_info)
+
+            parsed_teams['teams'].append(team_info)
+
+        return parsed_teams
+
 
     def parse_folders(self, data):
         """
             Parse appropriate content from the list of folders
         """
-        pass
+        return data
+
 
     def parse_spaces(self, data):
         """
-            Parse appropriate content from the list of spaces
+            Parse appropriate content from the list of spaces.  
         """
-        pass
+        parsed_spaces = {
+            'id': data['spaces'][0]['id'],
+            'name': data['spaces'][0]['name'],
+            'private': data['spaces'][0]['private']
+        }
+
+        # Extract features with 'enabled' equal to True
+        enabled_features = {feature: value for feature, value in data['spaces'][0]['features'].items() if value['enabled']}
+
+        # Add the enabled features to the output dictionary
+        parsed_spaces['enabled_features'] = enabled_features
+
+        return parsed_spaces
 
     def get_authorized_teams(self) -> str:
         """
@@ -151,25 +172,9 @@ class ClickupAPIWrapper(BaseModel):
         response = requests.get(url, headers=headers)
 
         data = response.json()
-        return data
+        parsed_teams = self.parse_teams(data)
 
-
-    def get_spaces(self, query: str) -> str:
-        """
-            Get all spaces for the team 
-        """
-        url = "https://api.clickup.com/api/v2/team/" + self.team_id + "/space"
-
-        query = {
-            "archived": "false"
-        }
-
-        headers = {"Authorization": self.access_token}
-
-        response = requests.get(url, headers=headers, params=query)
-
-        data = response.json()
-        return data
+        return parsed_teams
 
 
     def get_folders(self, query: str) -> str:
@@ -212,9 +217,9 @@ class ClickupAPIWrapper(BaseModel):
         response = requests.get(url, headers=headers, params=query)
 
         data = response.json()
-        
-        return data
-    
+        parsed_task = self.parse_task(data)
+        return parsed_task
+
     def query_tasks(self, query: str) -> str:
         """
             Query tasks that match certain fields
@@ -232,6 +237,25 @@ class ClickupAPIWrapper(BaseModel):
 
         data = response.json()
         return data
+
+    def get_spaces(self, query: str) -> str:
+        """
+            Get all spaces for the team 
+        """
+        url = "https://api.clickup.com/api/v2/team/" + self.team_id + "/space"
+
+        query = {
+            "archived": "false"
+        }
+
+        headers = {"Authorization": self.access_token}
+
+        response = requests.get(url, headers=headers, params=query)
+
+        data = response.json()
+        parsed_spaces = self.parse_spaces(data)
+        return parsed_spaces
+
     
     def get_task_attribute(self, query: str) -> str:
         """
