@@ -14,6 +14,7 @@ from langchain.tools.clickup.prompt import (
     CLICKUP_TASK_CREATE_PROMPT,
     CLICKUP_UPDATE_TASK_ASSIGNEE_PROMPT,
     CLICKUP_UPDATE_TASK_PROMPT,
+    CLICKUP_QUESTION_ANSWER_PROMPT,
 )
 from langchain.tools.clickup.tool import ClickupAction
 from langchain.utilities.clickup import ClickupAPIWrapper
@@ -83,6 +84,11 @@ class ClickupToolkit(BaseToolkit):
                 "mode": "update_task_assignees",
                 "name": "Update task assignees",
                 "description": CLICKUP_UPDATE_TASK_ASSIGNEE_PROMPT,
+            },
+            {
+                "mode": "answer_question",
+                "name": "Answer question",
+                "description": CLICKUP_QUESTION_ANSWER_PROMPT,
             },
         ]
         tools = [

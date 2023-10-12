@@ -1,0 +1,10 @@
+# Timesheets
+
+# Overview
+
+We are addressing the challenge of improving time tracking in ClickUp by introducing a user-friendly timesheet tool. This tool aims to streamline the process of recording and managing time spent on tasks, enhancing visibility, simplifying editing, and reducing the reliance on external tools for time management. Full details are in the linked project brief.
+
+
+
+*   **Project Brief:**[](https://app.clickup.com/333/v/dc/ad-884545/ad-2330457)
+*   **Design Preview:**[](https://app.clickup.com/t/8x8uu5zxn)

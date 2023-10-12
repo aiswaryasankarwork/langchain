@@ -1,0 +1,74 @@
+# Exponential Call to at mentions being made on Home, Task
+
+If there are at mentions on a doc or in a link, we make a call to page?page\_ids to get data.
+
+  
+
+This data is called many times.
+
+  
+
+![](https://t333.s.clickup-attachments.com/t333/061dd941-15f8-4c62-8657-8e075a20f2a9/image.png)
+
+  
+
+# Research into Root Cause
+
+*   Issue was identified due to home page causing these extraneous calls to `page?page_ids=_____` and there is confusion due to the call parameters being duplicated
+*   Home page appears to have an additional problem that results in some form of exponential increase in the number of calls
+    *   NOTE: I don't have any answer for why this is happening atm
+*   The problem only occurs when a mention is included in the preview of the comment
+    *   In the Assigned Comments widget this means that if the comment body is cut off before the mention then no duplicated call will appear
+*   This led to suspicion that the [core Comment component](https://github.com/time-loop/clickup_frontend/blob/qa/libs/comment/common/src/lib/comments/comment.component.ts) might be the culprit
+    *   Looking at the component we see that in `ngAfterViewInit` it fires off a call to the [MentionsService.updateMentions](https://github.com/time-loop/clickup_frontend/blob/43c441c0e721f8f3a270b1959d3c58988cd1fbe8/libs/quill/mention-service/src/lib/mentions/mentions.service.ts#L225C1-L225C1) and that function wraps refreshing all the mentions in the parent ClickUp Object
+    *   This seems to verify that Comment Component is at least part of the problem...
+*   It's worth mention that the Inbox does not seem to have this same inefficient behavior
+    *   This appears to be because the NotificationBodyItemComponent does not `[loadMentions]="true"` when it renders `<cu-comment>`
+    *   this is validated by the fact that `MentionsService.updateMentions` is only called when `loadMentions` is set to true in the Comment COmponent
+*   After the mention data is retrieved by the comment component it does not persist that information and only keeps it local to the component component (_not_ the service)
+
+  
+
+* * *
+
+# Potential Fix
+
+This fix is simply a proposal and should be questioned by whomever gets assigned the task, but if you want to talk it over with me hit me (@Nick Heinbaugh) up!
+
+  
+
+### Acceptance Criteria
+
+- [ ]     Mentions should be retrievable from any part of the application without duplicative API calls
+- [ ]     Mentions should be formed from existing data caches (e.g. `taskCache`) when possible
+- [ ]     Any component requiring a mention should be able to pass the ID of the mentioned ClickUp Object and be returned the properly formatted Quill blot
+- [ ]     Any given mention should only result in a single API call throughout a session
+    *   No persistence between sessions at this point
+- [ ]     When a mentioned item (e.g. Task or Doc) is updated in a manner that would result in the blot updating (such as the title changing) that change should be reflected without requiring a refresh or new API call
+
+  
+
+### Test Plan
+
+- [ ]     \>>More to come from Nick<<
+
+### Notes
+
+*   Based on the problem state I propose that we introduce a `Mentions` slice of the store (we can easily leverage the NgRx entity store pattern I think), and this MentionsService should be updated to retrieve information out of that section of the store.
+*   This problem exists in various states for Tasks, Docs, Users, User Groups, Views and goals
+    *   In the Task version we appear to correctly leverage the internal `taskCache`
+    *   In Docs we just blindly hit the API every time: [Source](https://github.com/time-loop/clickup_frontend/blob/43c441c0e721f8f3a270b1959d3c58988cd1fbe8/libs/quill/mention-service/src/lib/mentions/mentions.service.ts#L901)
+*   \>>More to come<<
+
+
+	
+- [ x ] Build out Doc Pages global state (status: production)
+- [  ] Reduce the amount of docs the comment component attempts to fetch (status: ready for dev)
+- [  ] Spike | Can we use Angular's renderer2 instead of MentionBlot to update mentions (status: ready for dev)
+- [  ] Reduce the amount of view mentions the comment component attempts to fetch (status: qa review)
+- [ x ] Reduce the amount of goals the comment component attempts to fetch (status: production)
+- [  ] Remove any reference to ManagerDataService in the mentions service (status: ready for dev)
+- [  ] Remove any calls to https://staging.clickup.com/tasks/v1/task/ (status: code review)
+- [  ] Doc history mentions (status: ready for dev)
+
+
