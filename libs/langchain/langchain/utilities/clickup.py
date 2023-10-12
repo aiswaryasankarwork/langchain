@@ -365,23 +365,66 @@ class ClickupAPIWrapper(BaseModel):
         Retrieve a specific task
         """
 
+    def get_task(self, query: str) -> str:
+        """
+            Retrieve a specific task 
+        """
+        # If the task is one of the ones for the demo, load from the folder
         params, error = load_query(query, fault_tolerant=True)
         if params is None:
             return {"Error": error}
 
-        url = f"{DEFAULT_URL}/task/{params['task_id']}"
-        params = {
-            "custom_task_ids": "true",
-            "team_id": self.team_id,
-            "include_subtasks": "true",
-        }
-        response = requests.get(url, headers=self.get_headers(), params=params)
-        data = response.json()
-        parsed_task = parse_dict_through_component(
-            data, Task, fault_tolerant=fault_tolerant
-        )
+        task_id = params["task_id"]
 
-        return parsed_task
+        if task_id in ["CLK-337140", "CLK-337723", "CLK-338765", "RDMP-7376", "RDMP-7690"]:
+
+            try:
+                # Ingest the comment data into the db
+                comments_data_loader = TextLoader("/Users/aiswaryasankar/Desktop/code/langchain/libs/langchain/task_data/" + str(task_id) + "/comments.txt", encoding = 'UTF-8')
+                documents = comments_data_loader.load()
+                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+                docs = text_splitter.split_documents(documents)
+                embeddings = OpenAIEmbeddings(openai_api_key="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")
+                db_comments = FAISS.from_documents(docs, embeddings)
+
+                # Ingest the task data into the db
+                task_data_loader = TextLoader("/Users/aiswaryasankar/Desktop/code/langchain/libs/langchain/task_data/" + str(task_id) + "/task_data.txt", encoding = 'UTF-8')
+                documents = task_data_loader.load()
+                text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+                docs = text_splitter.split_documents(documents)
+                db_tasks = FAISS.from_documents(docs, embeddings)
+
+                # Merge the indices and query 
+                db_comments.merge_from(db_tasks)
+
+                # Save the vector db for subsequent tasks
+                self.vector_db = db_comments
+
+                # Ideally would be nice to have a format here for the task response
+                task = {
+                    'id': task_id,
+                    'text_content': docs,
+                }
+                return task
+            except Exception as e:
+                print(e)
+                return {}
+
+        else:
+            url = f"{DEFAULT_URL}/task/{params['task_id']}"
+            params = {
+                "custom_task_ids": "true",
+                "team_id": self.team_id,
+                "include_subtasks": "true",
+            }
+            response = requests.get(url, headers=self.get_headers(), params=params)
+            data = response.json()
+            parsed_task = parse_dict_through_component(
+                data, Task, fault_tolerant=fault_tolerant
+            )
+
+            return parsed_task
+
 
     def get_lists(self) -> Dict:
         """
@@ -565,29 +608,76 @@ found in task keys {task.keys()}. Please call again with one of the key names.""
             self.list_id = data["id"]
         return data
 
+
+    def answer_question(self, query: str) -> str:
+        """
+            This needs to do the following - 
+            1. Fetch all the task info
+            2. Index the data into a FAISS vector store
+            3. Perform Q&A over the data
+        """
+        params = json.loads(query)  
+        print("PARAMS: " + str(params))
+
+        # Ingest the comment data into the db
+        if self.vector_db == None:
+
+            comments_data_loader = TextLoader("/Users/aiswaryasankar/Desktop/code/langchain/libs/langchain/task_data/" + str(params[task_id]) + "/comments.txt")
+            documents = comments_data_loader.load()
+            text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+            docs = text_splitter.split_documents(documents)
+            embeddings = OpenAIEmbeddings(openai_api_key="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")
+            db_comments = FAISS.from_documents(docs, embeddings)
+
+            # Ingest the task data into the db
+            task_data_loader = TextLoader("/Users/aiswaryasankar/Desktop/code/langchain/libs/langchain/task_data/" + str(params[task_id]) + "/task_data.txt")
+            documents = task_data_loader.load()
+            text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+            docs = text_splitter.split_documents(documents)
+            db_tasks = FAISS.from_documents(docs, embeddings)
+
+            # Merge the indices and query 
+            db_comments.merge_from(db_tasks)
+            self.vector_db = db_comments
+
+        try:
+            query = params["question"]
+        except Exception as e:
+            return "Failed to parse the question from the prompt"
+
+        qa = RetrievalQA.from_chain_type(
+            llm=OpenAIChat(model="gpt-3.5-turbo"),
+            chain_type="stuff",
+            retriever=self.vector_db.as_retriever(),
+        )
+        return qa.run(query)
+
+
     def run(self, mode: str, query: str) -> str:
         if mode == "get_task":
             output = self.get_task(query)
-        elif mode == "get_task_attribute":
-            output = self.get_task_attribute(query)
-        elif mode == "get_teams":
-            output = self.get_authorized_teams()
-        elif mode == "create_task":
-            output = self.create_task(query)
-        elif mode == "create_list":
-            output = self.create_list(query)
-        elif mode == "create_folder":
-            output = self.create_folder(query)
-        elif mode == "get_lists":
-            output = self.get_lists()
-        elif mode == "get_folders":
-            output = self.get_folders()
-        elif mode == "get_spaces":
-            output = self.get_spaces()
-        elif mode == "update_task":
-            output = self.update_task(query)
-        elif mode == "update_task_assignees":
-            output = self.update_task_assignees(query)
+        # elif mode == "get_task_attribute":
+        #     output = self.get_task_attribute(query)
+        # elif mode == "get_teams":
+        #     output = self.get_authorized_teams()
+        # elif mode == "create_task":
+        #     output = self.create_task(query)
+        # elif mode == "create_list":
+        #     output = self.create_list(query)
+        # elif mode == "create_folder":
+        #     output = self.create_folder(query)
+        # elif mode == "get_lists":
+        #     output = self.get_lists()
+        # elif mode == "get_folders":
+        #     output = self.get_folders()
+        # elif mode == "get_spaces":
+        #     output = self.get_spaces()
+        # elif mode == "update_task":
+        #     output = self.update_task(query)
+        # elif mode == "update_task_assignees":
+        #     output = self.update_task_assignees(query)
+        elif mode == "answer_question":
+            output = self.answer_question(query)
         else:
             output = {"ModeError": f"Got unexpected mode {mode}."}
 

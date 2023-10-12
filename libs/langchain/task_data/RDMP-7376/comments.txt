@@ -1,0 +1,186 @@
+---------------
+Comment ID 98020014820975 on 2023-09-18T17:40:44.066Z
+
+Determine if we can show the description as html without initializing the full quill editor until the user Clicks into the description.
+
+I'm not sure this should be done during this ticket.
+
+Let us see what the investigation finds first, but this is a much bigger change that has a lot of implications.
+
+
+
+    ---------------
+    Reply to 98020014820975 on 2023-09-20T18:13:11.353Z
+
+    We have talked about this in the past, and here are the main reasons this could be an issue:
+
+I believe there are currently small differences when a Delta is rendered with deltaToHtml so that they don't look and feel exactly the same. I forget exactly which parts, but I can do some digging to find this info.
+You will not see cursors or live updates unless we added code to somehow make readonly versions rendered in HTML work with YJS.
+There would be a slight delay when clicking into it and would not feel fluent. I feel like this might be bad UX if they want to start interacting with document right away. Can't do it on tasks right now, but it would also remove the ability to highlight and leave a comment until the editor was rendered.
+100-200ms to just create quill instance
+Another 100+ms for rendering the content
+
+If we are okay with some of these tradeoffs we can look into experimenting with this, but not sure worth LOE right now until we finish with other improvements.
+
+
+
+---------------
+Comment ID 98020014821001 on 2023-09-18T17:44:20.344Z
+
+@Justin Midyet , do you have any profiles or videos where this is happening so I can compare and contrast?
+
+Not sure if you saved any of the ones we were looking at last week.
+
+
+
+    ---------------
+    Reply to 98020014821001 on 2023-09-19T06:51:03.571Z
+
+    Chatted on call if you want me to find some happy to look.
+
+
+
+    ---------------
+    Reply to 98020014821001 on 2023-09-19T14:31:59.823Z
+
+    We should be good now! Thanks!
+
+
+
+---------------
+Comment ID 98020014821050 on 2023-09-18T17:53:52.330Z
+
+@Justin Midyet , when looking at this task should we just focus on v3, or should we be taking task v2 into account also?
+
+
+
+    ---------------
+    Reply to 98020014821050 on 2023-09-19T06:50:41.089Z
+
+    Let's focus on V3 for now
+
+
+
+---------------
+Comment ID 98020014826749 on 2023-09-19T21:25:31.232Z
+
+dgornstein/RDMP-7376/slow-task-description-loading preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014828694 on 2023-09-20T14:08:00.319Z
+
+@Hari Rajagopalan , currently I'm only doing this for task view v3, but we should consider re-looking at the Docs render scheduling as well.
+
+Usually large Docs are bigger then large tasks, so we would want to do some testing. But currently Docs is using one of the following schedules:
+
+let strategy = 'userBlocking';
+if (opsLength >= 450) {
+  strategy = 'normal';
+}
+
+You can see that if it uses normal, it could get delayed by other work for up to 5 seconds.
+
+CleanShot 2023-09-20 at 07.06.51@2x.png
+I'm focusing on task view for now, but I can do some profiling on Docs to see how often the rendering is currently getting interrupted.
+
+You can see on the PR though that tasks was for sure being delayed by less important stuff.
+
+image.png
+
+
+
+---------------
+Comment ID 98020014828785 on 2023-09-20T14:33:07.783Z
+
+dgornstein/RDMP-7376/slow-task-description-loading preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014828907 on 2023-09-20T15:02:09.019Z
+
+Putting this task in review. I will still be looking at some additional changes as part of this task: 8x8uuy23z
+
+
+
+---------------
+Comment ID 98020014829338 on 2023-09-20T16:21:51.285Z
+
+dgornstein/RDMP-7376/slow-task-description-loading preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014829483 on 2023-09-20T16:44:20.735Z
+
+Please QA review this: @Iago Galvalisi, @Gaston Corredoira , @Gonzalo Morales 
+
+FYI:  @Anastasiia Ihush.  @Michael Van Doorn  Please help QA this as well if it touches list view or if you have cycles   
+
+
+
+---------------
+Comment ID 98020014829489 on 2023-09-20T16:44:52.764Z
+
+@Justin Midyet , this is ready for QA. Do you think we could get help from a task squad QA member to validate?
+
+We should make sure we do some testing with different size tasks up to very large ones.
+
+Do you guys have some sample tasks already able to be used for testing?
+
+
+
+---------------
+Comment ID 98020014829504 on 2023-09-20T16:47:45.224Z
+
+@Esteban Barberon @Matthew Wester please taske a look 
+
+
+
+---------------
+Comment ID 98020014833740 on 2023-09-21T16:49:00.023Z
+
+@Daniel Gornstein leaving you some questions on this video just to be completely sure to give the approval
+Thanks
+
+https://t333.s.clickup-attachments.com/t333/ba06cb95-5bf2-43c5-a27b-0294b83f9e37/screen-recording-2023-09-21-13%3A48.webm?open=true 
+
+
+
+    ---------------
+    Reply to 98020014833740 on 2023-09-21T17:12:15.713Z
+
+    @Esteban Barberon , what you are seeing there (the spinning loading indicator) is you connecting to our co-editing engine. This was not updated as part of my changes, and what you are seeing in the video looks fine to me.
+
+Test that the description loads quicker and that the app doesn't feel 'blocked' by the description rendering.
+
+What I meany by this is if you open a xl task description, it shouldn't feel like your blocked from using the app. So if you want to close the modal, or click around, things should still feel smooth.
+
+
+
+    ---------------
+    Reply to 98020014833740 on 2023-09-21T17:12:52.426Z
+
+    Since that is not an issue - are we good to merge this to QA?
+
+
+
+    ---------------
+    Reply to 98020014833740 on 2023-09-22T15:33:26.194Z
+
+    @Esteban Barberon , I'm going to merge this for cutoff.
+
+
+
+    ---------------
+    Reply to 98020014833740 on 2023-09-22T16:07:52.925Z
+
+    If that is not an issue, this is fine to merge this one
+
+
+
+---------------
+Comment ID 98020014837331 on 2023-09-22T15:33:37.779Z
+
+Please QA review this: @Iago Galvalisi, @Gaston Corredoira , @Gonzalo Morales 
+
+FYI:  @Anastasiia Ihush.  @Michael Van Doorn  Please help QA this as well if it touches list view or if you have cycles   

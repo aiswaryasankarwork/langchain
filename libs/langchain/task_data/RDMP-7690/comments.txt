@@ -1,0 +1,1187 @@
+---------------
+Comment ID 13214858 on 2021-10-21T20:19:10.349Z
+
+@Angela Bunner @Kelsey Frost @Brian Shen  i made a quick brain dump with the main ideas i have about timesheet.
+please review and comment and  - or add other ideas you may have or that your prospects requested.
+
+this list doesn't represent the MVP, the features will during scoping be divided in versions.
+
+
+
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-21T21:28:42.446Z
+
+    @zach Here are my ideas about the Timesheet. I think there could be a good space for a collaboration viz and dashboard for that.
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-22T03:55:13.641Z
+
+    do you mean task hrs assigned  during that week?
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-22T04:28:09.702Z
+
+    @Didier Varlot  is tracked meaning "assigned hours" that week , ie from task assignments?
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-22T04:37:58.145Z
+
+    @Didier Varlot  is tracked meaning "assigned hours" that week , ie from task assignments?
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-22T04:37:58.329Z
+
+    this is nice to have, as folks can create an Admin/OH proejct to track time to, doesn't need to necssarily be special hard-code built into the TS moo
+
+ What's missing here that's more common is need to be abe to enter/override timesheet on behalf someone on your team, your directs.
+
+Approveals. as PM, or Line Mgr. and ability to delegate approval.
+
+Ability to enter CF's on timesheet records, like Work Type, Utilization Category, Location (as this may be used for tax purposes).
+
+Ability to then apply RATES from user profile, to the time enter, and calc fields on task (like cost, revenue, billing).
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-22T04:41:07.376Z
+
+    or you have setting that allows edits forward/backwards by X Periods.
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-22T04:58:41.639Z
+
+    cost rates should be assoc with USER Profile.  Revenue/Bill rates should be based on project rate card, typically by client.  Rates and financials shouldn't show on timecard entry/ review, but on the proejct/task pages, or reports.
+
+
+
+    ---------------
+    Reply to ad-309944 on 2021-10-22T11:58:41.550Z
+
+    The rates shall be per user or per project ( we may charge different rates for different types of project)?
+anyway the first implementation should be only one  rate, but should we need after to have more?
+
+
+
+---------------
+Comment ID 88758312198 on 2021-10-26T14:51:07.249Z
+
+@Didier Varlot Do we have the whole concept of Team Lead and Project Manager described somewhere?
+
+
+
+    ---------------
+    Reply to 88758312198 on 2021-10-26T14:55:57.532Z
+
+    Not yet. This is one of the issue we will have to define asap
+
+
+
+---------------
+Comment ID 120240300001 on 2021-12-15T04:02:12.858Z
+
+@Didier Varlot @Mykyta Istomin are there designs for this already? I know you guys started this task a few weeks ago, so just curious where we are at with it? Even if not done, can I get a sense of work in progress?
+
+
+
+    ---------------
+    Reply to 120240300001 on 2021-12-15T15:16:47.070Z
+
+    @Brian Shen here most recent designs:
+https://www.figma.com/file/eppm9zusUXyDFwtJoPvi6o/Timesheet?node-id=1151%3A57578here is basic navigation pt, without edit and create states:
+https://www.figma.com/proto/eppm9zusUXyDFwtJoPvi6o/Timesheet?page-id=1151%3A57578&node-id=1167%3A53380&viewport=412%2C48%2C0.3&scaling=scale-down&starting-point-node-id=1151%3A58925till the end of the week, we will have more functional pt.
+
+
+
+    ---------------
+    Reply to 120240300001 on 2021-12-16T09:09:15.724Z
+
+    @Brian Shen
+  I prefer to answer to your comment here as the answer will be included in the history of the task
+is history required for MVP?
+I think that it is indeed required. without it the user will fill in his timesheet submit it and have no way to find back what happened with the submission. he would have to search for every individual time entry of the week he want to see.  it would be like throwing his timesheet to a black hole.
+not sure this make sense here? Shouldn't this be a button they can click on home or on the specific task?
+The idea was this is the command center of the time tracking of the user, so naturally we added the tracking widget here also. The main use would be to add quickly a manual entry if during his review the user sees that one entry is lacking.
+It is also true that the timer is also accessible as floating tool on the bottom.
+
+Is there any plan to change the floating tools in the near future ( like revamp of the tray) to know if we can count on this tool for the MVP?
+
+Are overview and Time Entries needed for MVP?
+We imagined Overview as a welcome screen including some reports.
+For MVP, the user will find the 3 donut charts and an histogram of the progress of his week
+The time entry page is in fact where all the work of the user is done.
+We discovered that editing directly in the timesheet is a complicated process for anything more than deleting an entry.
+Grouping and sorting tasks will be offered later for the MVP only chronological order is available.
+The time sheet page is where the user can have an overview and a last big picture view before submitting, This is also the view where the manager will approve or reject.
+The "under review" page is where the user get the feed back from what is being reviewed and where he can answer to the comments of his manager and make edition on time entries that are marked for clarification.
+
+The work diary page in Time entry will not be included in the MVP and we may also de scope the calendar view from the MVP.
+
+This leaves still a large MVP.
+
+I will prepare a flow chart in the brief to explain the workflow of the MVP and this will allow me to challenge our choice and maybe find a way to descope something.
+
+cc @Mykyta Istomin
+
+
+
+    ---------------
+    Reply to 120240300001 on 2021-12-21T04:22:15.727Z
+
+    @Didier Varlot you should de-scope anything that isn't absolutely necessary.
+
+For example:
+Overview as a welcome screen including some reports.
+For MVP, the user will find the 3 donut charts and an histogram of the progress of his week
+
+There may be others, but can do do another pass and be really strict on what is MVP vs not?
+
+
+
+    ---------------
+    Reply to 120240300001 on 2021-12-22T15:02:27.141Z
+
+    done. MVP is now bare bone. Weekly timesheet in one view and approval in the same view ( with a little addition)
+I even de-scoped the request for clarification as it implies some comments to manage the back and forth. It will come later.
+I want to organize a stakeholder review immediately after new year to review the design that will have been done and determine what feature in which phase after the MVP.
+
+
+
+    ---------------
+    Reply to 120240300001 on 2021-12-23T18:58:10.564Z
+
+    @Didier Varlot Great! So just to confirm - the Time Entries tab with the different views is also de-scoped right?
+
+
+
+    ---------------
+    Reply to 120240300001 on 2021-12-23T19:56:48.613Z
+
+    Yes we are simplifying and streamlining all, I think you will love it
+
+
+
+---------------
+Comment ID 13226017 on 2021-12-19T12:46:54.570Z
+
+@Mykyta Istomin
+here is an idea I had. We can discuss it tomorrow during our sync.
+
+
+
+---------------
+Comment ID 123996300019 on 2021-12-20T18:39:14.275Z
+
+Thanks for sharing @Didier Varlot. On the summary time breakdown widgets (screenshot included) is it possible to toggle between auto vs manual and billable vs non-billable? I would see more clients getting value in being able to report on billable vs non-billable time breakdown than on manual time-tracking vs auto-tracking percentages.
+image.png
+
+
+
+    ---------------
+    Reply to 123996300019 on 2021-12-20T19:38:52.353Z
+
+    3 views will be set : auto-tracked / Manual, Assigned / Unassigned and Billable / non-billable
+
+
+
+---------------
+Comment ID 13226306 on 2021-12-20T21:38:46.025Z
+
+@Mykyta Istomin
+as discussed
+
+
+
+---------------
+Comment ID 13230330 on 2022-01-07T16:39:18.470Z
+
+@Brian Shen  @Angela Bunner  @Devin Stoker  @Mike Slaby
+Here are the notes taken yesterday about approval. Please feel free to add any feed back you see relevant.
+
+
+
+---------------
+Comment ID 13231004 on 2022-01-11T14:54:18.630Z
+
+Hello @Brian Shen
+here is a loom about the MVP design we made.
+Your feed back is appreciated (and required to be fully honest! )
+https://www.loom.com/share/cac7dca1e03147b1b074a93f7ec9bcfeand the figma link
+https://www.figma.com/proto/eppm9zusUXyDFwtJoPvi6o/Timesheet?page-id=1254%3A61490&node-id=1255%3A60293&scaling=min-zoom&starting-point-node-id=1255%3A60293
+
+
+
+    ---------------
+    Reply to 13231004 on 2022-01-20T19:50:16.243Z
+
+    @Didier Varlot I think i responded in Slack. I think this one was missed because of our ongoing notifications issues. Anything else you need from me? If not, can you resolve the comment above?
+
+
+
+    ---------------
+    Reply to 13231004 on 2022-01-20T20:29:46.431Z
+
+    Yes, you answered in Slack and I really thank you. I will also create a page in the brief with all the feedback I received in slack ( to keep all in the same place).
+Thank you
+
+
+
+---------------
+Comment ID 13231012 on 2022-01-11T15:18:27.969Z
+
+Hi @Devin Stoker and @Angela Bunner
+here is the first PT for Timesheet
+https://www.figma.com/proto/eppm9zusUXyDFwtJoPvi6o/Timesheet?page-id=1254%3A61490&node-id=1255%3A60293&scaling=min-zoom&starting-point-node-id=1255%3A60293and a short loom of presentation
+https://www.loom.com/share/cac7dca1e03147b1b074a93f7ec9bcfeYour feedback is highly appreciated
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-11T19:42:19.949Z
+
+    Thanks @Didier Varlot !
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-13T04:41:32.548Z
+
+    Looks great so far @Didier Varlot .  When approvals happen, will we lock the timesheet from being edited again?
+The Max hrs per day is nice to have IMO. I'd rather have "duplicate last week's timesheet"
+where will you put the Unassigned time to? Is the Hrs/Day/Week so that you can drive that Unassigned row? Will this time (and costs) go to an Overhead/Admin project?
+For adding tasks - we need to make it super easy to find tasks.
+Can user create NEW tasks here too?
+Can we create add'l CF"s on the time entry, ie not just billable/nonbillable, but maybe also Location, Work Type (utilization category), override bill rate?
+
+
+Adding @Abraham (Abe) Castro  since he's got Batchmasters client, for any thoughts too.
+Same with @Alexander Gorman from Clarizen context, and other top asks for clients from CZ days.
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-13T13:27:30.477Z
+
+    When approvals happen, will we lock the timesheet from being edited again?
+@Angela Bunner every time a time entry is approved or rejected it is locked.
+time entries remain editable until approved or rejected .
+I'd rather have "duplicate last week's timesheet"
+I am not sure I understand the use case as the tasks must have at least one time entry to appear here.
+where will you put the Unassigned time to?
+at present the unassigned are simply time entries that have no task allocated, so they are stored as unassigned. could you elaborate what you would like to do with unassigned time entries. I will accommodate this in a subsequent phase.
+
+For adding tasks - we need to make it super easy to find tasks.
+Fully adhere to this. I was thinking using the same approach as in the command bar ( with recent list).
+Please note that the user doesn't directly add a task to the list but he adds a time entry allocated to a task not already in the list and automatically the task is added to the list.
+
+Can user create NEW tasks here too?
+very good point, Will add to a subsequent phase.
+
+Can we create add'l CF"s on the time entry, ie not just billable/nonbillable, but maybe also Location, Work Type (utilization category), override bill rate?
+So customization of the time tracking modal? good idea, but also for a subsequent phase.
+
+Once I get a little bit more of feedback, I would like a meeting with you to get your opinion on prioritizing the features that will come in the subsequent phases and also to prioritize these phases vs other features (like dependencies, or calendar 2-way sync.)
+
+
+
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-13T15:05:53.086Z
+
+    Here are a few questions that came up from customers while sharing this and @Didier Varlot's responses in-line:
+If you want to track time to a task/project, do we require a user to be assigned to that task/project?  (this is how Mavenlink and Klient do it).
+This will not be the case in ClickUp as you do not have to be assigned, you just need to have access
+Will you be able to set the max number of hours/set working days for teams/groups of employees?  Or is it a global setting or just individual by individual?
+We can create a default setting for users for the ClickApp
+Anything more would not be a part of the MVP
+If someone selects a manager to approve time and that manager is OOO, can another admin approve the time?
+Not in the MVP, but soon after we will add "approval by role"
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-13T20:16:19.885Z
+
+    I added a page  where I put the remaining features that are not integrated in the MVP as it is planned today and I would like your collaboration to
+add the features that are missing for the list
+match them to V2 to V4  or descoped for the feature that we should not ship.
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-14T14:02:13.006Z
+
+    @Didier Varlot are you okay if we add an MVP column so it is easy to visualize what is included in the MVP?
+
+Also, do you want us to add some indicator of where we vote a feature or should we just have a call to align on the plan?
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-17T19:13:36.529Z
+
+    I added a MVP column.
+Please vote and then we will make a meeting to wrap up and finalize.
+thank you
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-19T21:59:04.863Z
+
+    @Didier Varlot I just added my votes.  Wasn't sure how to indicate it was my vote so I just @mentioned myself.  Feel free to adjust
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-20T16:26:53.719Z
+
+    @Devin Stoker  When you didn't vote for one feature does it mean that
+you think it doesn't worth being included
+that you don't have an opinion about which version it should be included in, or
+You don't have any requests from customers about it
+Only to understand how I should treat those lines with no votes.
+
+
+
+    ---------------
+    Reply to 13231012 on 2022-01-20T23:06:41.830Z
+
+    @Didier Varlot mainly I am not hearing it from customers so it is not top of kind or I can think of a pressing need for it
+
+
+---------------
+Comment ID 148263300015 on 2022-01-21T18:54:45.283Z
+
+Sorry for my late reply but here is my feedback:
+Instead of naming it + Time Entry can we make it more descriptive and change it to something like: + Track Time to an existing task
+Little user experiences like this would help the user better understand what is being asked of them, or how they can go about time tracking
+I agree with @Angela Bunner Can users create NEW tasks here too?
+How are approvers selected?
+I saw the drop down, but would like to know if there is a particular role that we need to be included in that list.
+Sometimes, approvers are not people managers, but project managers so flexibility would be nice to have here
+Can you approve your own time entry?
+This should not be the case for most orgs but want to ask
+Notifications?
+How do people know if time sheets have been approved? Changed back to In review?
+Once something is approved, can we lock it?
+
+
+
+    ---------------
+    Reply to 148263300015 on 2022-01-21T19:42:45.720Z
+
+    @Abraham (Abe) Castro
+Instead of naming it + Time Entry can we make it more descriptive and change it to something like: + Track Time to an existing task
+@Mykyta Istomin  what do you think about this?
+
+I agree with @Angela Bunner Can users create NEW tasks here too?
+This is something we can allow in the task field of the modal of tracking time.
+
+How are approvers selected?
+for the MVP the approver will be a simple people field where the user can put whoever he wants so can be a project manager or a team manager. There will be no restriction at that stage. so complete flexibility
+
+Can you approve your own time entry?
+the fact that the choice of who will approve is totally open, but we may prevent this in any case
+
+Notifications?
+There will be notifications for timesheet submitted, approval requested, timesheet approved
+Furthermore in the scrolling list of weekly timesheet a dot indicate the status of the timesheet
+
+Once something is approved, can we lock it?
+Once the timesheet has been fully, or partally approved or rejected it is locked
+
+
+
+---------------
+Comment ID 13234044 on 2022-01-22T14:32:08.881Z
+
+@Angela Bunner @Devin Stoker @Abraham (Abe) Castro @Alexander Gorman
+
+With the focus that we are required to give to bug resolution, performance improvement, and quick UX wins, we had to review the priority of each new feature.
+In parallel, the squad should receive soon additional resources, which will help mitigate the impact.
+The best estimate that I can give now is that:
+the development shall begin during Q1 FY2023 ( mid-march or April)
+the release of the MVP shall happen at the beginning of Q2 FY2023.
+Timesheet shall be the first new Epic that we will start.
+We will use this time to refine the approval and notification design.
+I will keep you posted with any updates that will come to my knowledge.
+
+CC: @Brian Shen
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-24T13:58:24.981Z
+
+    @Angela Bunner @Devin Stoker @Abraham (Abe) Castro @Alexander Gorman
+I suggest we put this delay into profit by developing a more scalable approval approach.
+What is your opinion on the following points:
+what other objects (out of timesheet) would benefit at some stage from approval?
+Task status change?
+Documents?
+Other?
+Should we offer a centralized place for all approvals, or should approvals be distributed in every object benefiting from approvals?
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-24T15:22:00.191Z
+
+    We have quite a few deals that are buying with the expectation that this feature will be delivered soon.  Can we guarantee a mid March deployment?
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-24T15:22:43.586Z
+
+    If I were to choose any from the above it would be "Task Status Change".  However would need more detail on what could be included.
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-24T18:29:36.109Z
+
+    @Didier Varlot all kinds of work can benefit from an approval if we go the route of building an engine for it.  Here are a couple more to add to the list on top of timesheets and docs:
+
+Project requests for PMOs and initial setup of project framework (time and budget)
+Work concessions
+Change requests to scope, budget, or time
+Vacation requests
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-24T18:59:26.515Z
+
+    We have quite a few deals that are buying with the expectation that this feature will be delivered soon.  Can we guarantee a mid March deployment?
+@Devin Stoker I can only guarantee that we will get it out as quick as possible ( at least the MVP - as we have to discuss how the subsequent phases are prioritized compared with the calendar sync and other features). But I cannot set a target date now. Fortunately, I will receive additional resources soon and this may make me more optimistic when they will join the squad, but for the moment all depends on how we put the bugs under control with the limited resources available.
+I will keep you posted on a regular basis about this.
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-25T15:24:25.327Z
+
+    @Devin Stoker we cannot guarantee a late march delivery. At this point all we can say is later this year since the primary focus is reliability and performance. Basically 100% of resources outside of Whiteboards are focusing on the refactoring so we can get out of the woods.
+
+The squad that is tackling timesheets is one of the most understaffed areas, but also one of the areas with the most bugs.
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-25T21:20:56.884Z
+
+    I would recommend that the approval engine be built independently of this functionality (I know, easy for me to say).
+
+The reason is due to how customers may want to use it. I can already see approval functionality extending beyond timesheets. I would rather that be an object/feature that customers can use in an interoperable manner with other objects such as lists, tasks, comments, docs, timesheets, automation, templates, etc.
+
+In my opinion (if you're interested), it is better to build for scalability before we introduce a feature so that it doesn't limit workflow configurations and use cases later.
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-26T17:20:06.633Z
+
+    @Brian Shen I heard that this may be delayed even further that what @Didier Varlot stated above.  Do we have a more accurate timeline than this?
+
+
+
+    ---------------
+    Reply to 13234044 on 2022-01-27T01:50:12.758Z
+
+    @Devin Stoker no we don't have an updated timeline at this time. It's wholly dependent on getting out of the woods with bugs.
+
+I have also been pushing for a more scalable approach to approvals. It should be able to be generalized for other object types as well.
+
+
+
+---------------
+Comment ID 13234613 on 2022-01-25T12:30:43.462Z
+
+@Mykyta Istomin
+Setting menu has been slightly changed
+Notification requirements are ready
+
+
+
+
+---------------
+Comment ID 13234982 on 2022-01-26T13:08:21.246Z
+
+@Robert Brown and @Mike Kravtsov
+does this reflect our conversation correctly?
+
+
+
+    ---------------
+    Reply to ad-336348 on 2022-01-26T16:21:24.652Z
+
+    Maybe, even more, taking into account that our Assigned Comments functionality is a bit tricky and error prone.
+
+
+
+    ---------------
+    Reply to ad-336348 on 2022-01-26T18:38:21.702Z
+
+    @Brian Shen
+This is the estimate that dev gave to sustain the decision to go for individual time entry validation instead of adding comments
+
+
+
+    ---------------
+    Reply to ad-336348 on 2022-01-27T01:48:24.626Z
+
+    Ok great - so wait on the comment part and then sounds like approve/reject individual times isn't too bad. Just make sure that that is what customers are expecting as well.
+
+
+
+---------------
+Comment ID 13237743 on 2022-02-08T13:24:49.668Z
+
+@Jason Siegel Here is another task that is quite complicated
+
+
+
+---------------
+Comment ID 13241002 on 2022-02-27T12:48:30.388Z
+
+PM update
+We will separate the Timesheet and the corresponding approval feature.
+The design of the timesheet is finished
+The design of the approval part needs some additional work.
+
+
+
+    ---------------
+    Reply to 13241002 on 2022-02-27T20:21:49.926Z
+
+    I saw Timesheets on Shailesh's last Roadmap update during SKO as Q1 release. What will be int hat scope? @Didier Varlot
+
+
+
+    ---------------
+    Reply to 13241002 on 2022-02-27T21:12:17.804Z
+
+    @Angela (OOO until 2/28) We will start in Q1 but may release only in Q2, depending on resources.
+I included in the scope:
+weekly timesheet ( as per the design already presented)
+possibility to modify tracked time and to track time from the timesheet page
+automatic submission of timesheet to a manager ( set in the timesheet page menu)
+Access to history of timesheets
+Approval of individual timesheets by a manager
+History of approvals
+The design of the approval page still needs some work (adding comment capacity), but due to the events in Ukraine, I have no design capacity.
+
+
+
+    ---------------
+    Reply to 13241002 on 2022-03-01T03:25:01.270Z
+
+    That's still a lot to cover. I'd prioritize Weekly Timesheet & Approval first - then history/audit.
+How do you differentiate  "History of approvals" vs. "History of Timesheets"? You mean Past timesheets? I'd expect History of Timesheets to include the approvals of those timesheets. @Didier Varlot
+
+
+
+    ---------------
+    Reply to 13241002 on 2022-03-01T09:31:56.523Z
+
+    @Angela Bunner
+history of approval is the history of what timesheet the user has approved
+History of timesheet is the history of the timesheets of the user with their approval status
+
+
+
+---------------
+Comment ID 13241221 on 2022-03-01T09:07:18.756Z
+
+@Akram
+I will divide this task in two components: timesheet and timesheet approvals
+The design of timesheet is made
+the design for approvals is not yet finished and it need to accomodate comments.
+On this one I have more flexibility as the development of the approval part shall come in end of Q1.
+
+
+
+---------------
+Comment ID 181611300033 on 2022-03-02T20:39:34.520Z
+
+@Ying Tan Is this something you can help @Didier Varlot with?
+
+
+
+    ---------------
+    Reply to 181611300033 on 2022-03-09T18:53:21.449Z
+
+    per our discussion today, the timesheet approval/comments might get hold until April
+
+
+
+    ---------------
+    Reply to 181611300033 on 2022-03-09T18:59:45.928Z
+
+    There is a hackathon about approvals with Zeb next week, we should use the results to work on this feature
+
+
+
+---------------
+Comment ID 13241968 on 2022-03-04T12:53:12.668Z
+
+@Jeanette Decker  @Amir Kazemi @Danny Gans @John Bowman  @Angela Bunner @Brian Shen
+As promised yesterday, here is the description of what will be in the MVP of the timesheet.
+https://www.loom.com/share/292251db4bc34233afe52cdf6f7a1385Don't hesitate to call me for any detail you would like to have
+
+
+
+    ---------------
+    Reply to 13241968 on 2022-03-08T21:41:39.983Z
+
+    This timesheet functionality is an excellent MVP. Thanks for dedicating the time to build this out @Didier Varlot !! I can see many ways this will grow and extend our work management platform!
+
+
+
+---------------
+Comment ID 13245072 on 2022-03-19T12:43:43.214Z
+
+@Mykyta Istomin
+here are the new requirements for the modification of the design of timesheet.
+
+
+
+    ---------------
+    Reply to ad-584224 on 2022-03-24T10:20:47.972Z
+
+    @Mykyta Istomin
+As we exchanged yesterday
+
+
+
+---------------
+Comment ID 196194300028 on 2022-03-22T03:00:13.055Z
+
+@Mykyta Istomin are you owning timesheet designs? can you let me know if you need any help or coverage? happy to help
+
+
+
+    ---------------
+    Reply to 196194300028 on 2022-03-22T09:02:54.342Z
+
+    @Haris Butt yeap, I'm working on timesheet designs and it's already in good stage, some changes must be done, but I can handle it by myself
+
+
+
+    ---------------
+    Reply to 196194300028 on 2022-03-22T18:12:09.565Z
+
+    Awesome, sounds good 
+
+
+
+    ---------------
+    Reply to 196194300028 on 2022-05-05T19:37:20.888Z
+
+    @Haris Butt  I think that the design is now ready to present for validation.
+Before proceeding can you have a look and comment if necessary?
+here is the link
+https://www.figma.com/proto/eppm9zusUXyDFwtJoPvi6o/Timesheet?page-id=1411%3A79364&node-id=1411%3A79364&scaling=min-zoom&starting-point-node-id=1411%3A79365
+
+
+
+---------------
+Comment ID 198687300015 on 2022-03-24T02:58:24.799Z
+
+Minor UI 2 cents from last week @Mykyta Istomin @Didier Varlot
+Just think about a more straightforward way to pick period,tagged you both in Figma
+image.png
+
+
+
+
+
+---------------
+Comment ID 13249110 on 2022-04-05T16:27:57.368Z
+
+@Mykyta Istomin
+can you update me as where we stand for the update of the timesheet?
+I would like to validate the timesheet part already while we finish the approval part.
+
+
+
+---------------
+Comment ID 13251460 on 2022-04-15T08:48:39.178Z
+
+PM Update
+The design of the timesheet is completed, The task is being split for validation between timesheet and approvals as approval design is lagging.
+The abrupt modification of squad capacity obliges us to re-prioritize this feature vs the Summary Tasks, the Logic in forms and the Calendar sync.
+@Brian Shen  @Sean Kilcullen  @Jason Baker
+
+
+
+---------------
+Comment ID 13252728 on 2022-04-22T09:31:23.587Z
+
+PM Update
+The final touches of the design are being worked on.
+The feature will be presented soon for final scope and design validation before entering into development in one of the very next sprints.
+
+
+
+---------------
+Comment ID 13256072 on 2022-05-08T16:39:40.321Z
+
+PM Update
+The design is finished with the comments from the hackathon.
+This feature priority has been downgraded due to ICP and CU 3.0.
+With the elements in our possession as of today, the progress of this feature is put on hold until further information gives ground to re-evaluation.
+
+
+
+    ---------------
+    Reply to 13256072 on 2022-05-09T05:22:02.385Z
+
+    https://www.figma.com/proto/eppm9zusUXyDFwtJoPvi6o/Timesheet?page-id=1411%3A79364&node-id=1411%3A79365&viewport=412%2C48%2C0.47&scaling=min-zoom&starting-point-node-id=1411%3A79365
+
+
+
+---------------
+Comment ID 13257254 on 2022-05-12T13:25:17.050Z
+
+PM Update
+With CU 3.0 around the corner, the Timesheet and approval feature has been de-prioritized.
+The design is finished and we may use that time to get more user feed back on the design for when the feature will be re-prioritized.
+@Angela Bunner @John Bowman @Kelsey Frost
+
+
+
+---------------
+Comment ID 285597300000 on 2022-07-07T16:37:08.358Z
+
+@Haris Butt  per convo yesterday, here's the mockup Figma for the Timesheets module for your eyes.
+
+
+
+    ---------------
+    Reply to 285597300000 on 2022-07-08T15:38:00.154Z
+
+    @Zeb @Alex Yurkowski last Timesheets mocks:
+https://www.figma.com/file/eppm9zusUXyDFwtJoPvi6o/Timesheet?node-id=1254%3A61490
+If we want to do a brainstorm on how we could get a faster version of Timesheets out, I can set up for when I'm back from PTO.
+
+Currently not on the ICP list and resources are needed for 3.0. But a brainstorm could be interesting for an hour. Let me know!
+
+
+
+    ---------------
+    Reply to 285597300000 on 2022-07-08T21:35:50.793Z
+
+    This timesheet figma is very well designed.  We could definitely push approvals to simplify an initial release.
+
+
+
+    ---------------
+    Reply to 285597300000 on 2022-07-11T04:30:02.822Z
+
+    yeah let's do a sesion on this! cc @Haris Butt
+
+
+
+    ---------------
+    Reply to 285597300000 on 2022-07-11T09:30:27.052Z
+
+    @Sean Kilcullen sorry, but that Figma is not the latest version. Here is the link for the most recent version:
+https://www.figma.com/proto/eppm9zusUXyDFwtJoPvi6o/Timesheet?page-id=1411%3A79364&node-id=1411%3A79365&viewport=155%2C668%2C0.4&scaling=scale-down&starting-point-node-id=1411%3A79365
+there is still room for improvement, for example, we can use the already designed right sidebar pattern for history, comments and export.
+
+
+
+    ---------------
+    Reply to 285597300000 on 2022-07-18T23:01:02.299Z
+
+    Setup for next week!
+
+
+
+---------------
+Comment ID 289590300001 on 2022-07-12T12:52:58.082Z
+
+@Didier Varlot - Any update/commitment that I can share regarding this feature?
+
+
+
+    ---------------
+    Reply to 289590300001 on 2022-07-12T22:49:00.620Z
+
+    Nothing yet - anything that is committed would be on our Committed Roadmap here: undefined
+
+
+
+    ---------------
+    Reply to 289590300001 on 2022-07-14T14:40:57.396Z
+
+    @Brian Shen This is still showing on the public roadmap for this quarter... is that accurate?  I have a large customer (TruePill) that is very interested in the feature who is asking.  Thanks! 
+
+
+
+    ---------------
+    Reply to 289590300001 on 2022-07-16T00:41:23.018Z
+
+    No - we're having internal debates about how to update the public roadmap and will likely remove all dates to give us more flexibilit.
+
+
+
+---------------
+Comment ID 299667300011 on 2022-07-21T19:35:24.710Z
+
+PM Update - 2022-07-21
+
+Status: Major Risk
+Target Completion Date: Not defined
+Delivered this week:
+Roadblocks:
+de-prioritized and not funded
+Not clear if delivering the timesheet without approval ( even basic) would provide enough user value
+Next Steps:
+
+CC: @Angela Bunner @Devin Stoker @Chang Choe
+
+
+
+
+---------------
+Comment ID 98020009035166 on 2022-12-20T22:25:45.640Z
+
+Notes from Discussion:
+Contractor - Leo at https://www.plutio.com/about
+Need to loop in Haris all the way so it fits our design
+When we go to Haris we should have opinions about how the process should work
+Architectural conversations with Haris and Jiang Wu
+Need to ensure it meets our requirements
+What is in the requirements/what is not and how it should be designed
+What should be in the MVP and what can be a fast follow
+Got de-prioritized due to user experience with approvals
+Permissions needed to be thought through more
+Managers need see their teams
+Project time access
+People fields exist
+Approvals needs to include more than just timesheets
+Approvals need to be a part of this project
+Locking time
+Reminders & alerts for managers
+Attendees:
+@Brian Shen
+@Will Lehmann
+@Devin Stoker
+
+Next Steps:
+Review brief
+Build out requirements and identify MVP, fast follows, ideal state
+Build out desired customer experience
+Use competitor content for how to do it and how not to
+Weekly feedback sessions with @Brian Shen
+Architecture & Design session with Brian, Haris, Jiang
+
+
+
+
+---------------
+Comment ID 98020009071653 on 2023-01-06T16:23:44.667Z
+
+Notes from Discussion:
+Reviewed requirements list and product brief
+Good progress so far
+Still need to add use cases and make more updates to product brief
+Link to Timesheet Requirements here
+
+Link to Updated Timesheet Brief here
+
+Feedback:
+Permissions/roles
+Like the idea of a super admin
+Managers approves people's time entries
+Discussed approval button for the week
+Like the idea of approving for an entire week as the MVP
+Comments at the week level as mvp
+Can get more granular to the day in future versions
+Managers will be added to the people page soon!
+Added to individual people (not in groups yet)
+This can be used for time sheet
+Action Items:
+Competitive analysis
+Add this to the brief
+Things to model and things to change
+Do the approve granular entries vs days?
+What do exports look like for auditing?
+Requirements section in the brief
+Break it out in to components (further sub pages)
+Time entries
+Time approvals
+Identify opportunities for paywall
+If it starts on business or plus?
+What goes up to enterprise!
+Next steps
+Brian to
+Provide granular feedback on what we've submitted
+Provide an example brief for us to follow (different than Didier's)
+Schedule Kick-off with Leo
+Will & Devin
+Update the brief following the new model
+Provide additional information to Brian's comments
+Conduct competitive research
+Leo starts on Monday
+Kick-off with him on early next week to show what we've done
+Need to loop in Kayleen for approvals brief and core functionality
+Attendees
+@Brian Shen
+@Will Lehmann
+@Devin Stoker
+
+
+
+
+---------------
+Comment ID 98020014065848 on 2023-06-12T04:05:09.828Z
+
+@Anthony Creek can I get a quick update on this? A client we're meeting next week will really want to learn more about what our plans are if they have changed, and if we have more details on how it will work. Would you be able to record a loom for me and also share any slides and figma files we might be able to use?
+
+
+
+    ---------------
+    Reply to 98020014065848 on 2023-06-12T15:56:44.837Z
+
+    The updated brief we are working from is here: . Design tasks for Phase 1 are with Haris and Daniela. Not sure when they'll be ready for the first review, but I'm currently waiting for that. Our backend developer is scheduled to join us on July 10 currently. We will try to do what we can before then, but hard to say how much progress can be made until he is with us full-time.
+
+
+
+    ---------------
+    Reply to 98020014065848 on 2023-06-12T18:33:02.696Z
+
+    @Anthony Creek I remember at one point we talked about defaults for billable vs. not-billable. I didn't see that in your brief and this is one of the requirements for the customer (watch this chorus video https://hello.chorus.ai/listen?guid=3e930cdeb9a4460a90b9543806c13b55)
+
+
+
+    ---------------
+    Reply to 98020014065848 on 2023-06-12T20:52:09.230Z
+
+    @Briana Ings This is really a bit of stand-alone functionality so I don't have it included in the timesheets project. I'm starting to make a list of these and put some initial thoughts together. I'll add the Chorus video to my doc as well.
+
+
+
+
+
+    ---------------
+    Reply to 98020014065848 on 2023-06-12T22:20:35.586Z
+
+    Thank youu!! Can you please also start to put these on your roadmap list either as epics or quick wins? undefined
+
+We might end up needing ot come back to you on this one if this is a true blocker for the customer
+
+
+
+    ---------------
+    Reply to 98020014065848 on 2023-06-12T22:30:46.528Z
+
+    Yes, not a problem. I wasn't sure what the process was to go from an idea/need to a roadmap item so I thought I'd just start collecting them and go from there. I'll move that over though.
+
+
+
+    ---------------
+    Reply to 98020014065848 on 2023-06-12T23:20:42.680Z
+
+    If it's on your radar for this year, add it to your roadmap list. If its a quick win you might get to at some point ever, add it to the quick wins view
+
+
+
+---------------
+Comment ID 98020014599847 on 2023-07-14T13:26:04.569Z
+
+@Anthony Creek, I anticipate this to be heavily impacted by our lack of ability to display numbers in localized formats.
+I've described the issue here: , and while date formatting is a smaller issue, number formatting has been brought up in localization feedback from users, and will impact the usability of the solution significantly for users in non-English markets.
+I understand if this is not a priority, but wanted to make sure you are aware of this and how it might potentially impact adoption.
+CC @Brian Shen
+
+
+
+    ---------------
+    Reply to 98020014599847 on 2023-07-14T16:35:50.971Z
+
+    Can you clarify the issue here? We are using HH:MM time format, which I don't see called out as problematic in your doc. It's the same format used in the time tracking component, which is why we've carried it through to the timesheet.
+
+For dates, we are using  a format like Jul 14, 2023.
+
+We'd definitely like to add support for a time format preference to allow the user to choose and have a consistent experience throughout the app since right now it varies by component. But that won't be part of this project.
+
+
+
+---------------
+Comment ID 98020014658630 on 2023-07-31T21:03:19.134Z
+
+Targeting August 14th for internal beta
+
+
+
+
+---------------
+Comment ID 98020014677978 on 2023-08-04T22:34:46.559Z
+
+Staging release: Core functional timesheets use case is shipping internal for this deadline. additional admin capabilities are in the followup milestones (customer release)
+
+
+
+---------------
+Comment ID 98020014704749 on 2023-08-14T21:13:14.533Z
+
+Staging should be Friday/Monday. Ready for QA env this week after team is in person.
+
+
+
+---------------
+Comment ID 98020014721306 on 2023-08-18T22:44:58.938Z
+
+In staging -- design QA. @Hemant Kumar @Nick Paranomos can we get this documented so product teams can follow some process to get people into Beta
+
+
+
+    ---------------
+    Reply to 98020014721306 on 2023-08-22T00:44:47.833Z
+
+    @Hemant Kumar @Brian Shen how do squads currently rollout feature betas, and how do you think we can improve the process?
+
+
+
+    ---------------
+    Reply to 98020014721306 on 2023-08-22T01:08:06.253Z
+
+    hey @Nick Paranomos -
+
+What i do currently: For each feature that goes through beta, i send out a canny post and reach out to Angela's team to get a list of workspaces that need early beta access. And once we roll out the beta to these workspaces, i create a feedback loop (through form) and then take a  go/no-go decision to GA. This works quite well for my squad so far since all features we built have high customer interest and we get lot of feedback related to the feature.
+
+A scalable way is having a set of workspaces ready for Beta at a CU level and squads enabling these workspaces for Beta. In addition, each squad can have their own beta list of customers or reach out users through canny and Angela's team
+
+
+
+    ---------------
+    Reply to 98020014721306 on 2023-08-22T20:49:24.480Z
+
+    @Nick Paranomos every squad handles betas slightly differently, which makes it more challenging for GTM teams to become aware of the betas and get their customers signed up. And then once the betas are running, there isn't a single way that PMs go and collect the feedback, which also leads to challenges with where GTM teams can report feedback -- is it a slack channel, a form, a private canny board?
+
+I would recommend standardizing across squads, especially how to request getting access to a beta and/or showing which betas are currently active.
+
+
+
+    ---------------
+    Reply to 98020014721306 on 2023-08-22T23:56:10.045Z
+
+    @Brian Shen @Hemant Kumar this beta process can be part of the broader project to define "how we want to build". I'll own that effort, and pull you both in to get your input on the entire design/delivery process.
+
+
+
+    ---------------
+    Reply to 98020014721306 on 2023-08-23T17:28:27.327Z
+
+    Can we spin up a page in the handbook and get this documented. This is a huge gap
+
+
+
+    ---------------
+    Reply to 98020014721306 on 2023-08-23T17:32:00.299Z
+
+    @Haris Butt that's the plan. I'm going to start a project to ask you and other EPD leaders how we actually want to build (in detail, including beta releases). Then we'll document it in the operating manual, and update the roadmap space to match the build process we're targeting.
+
+
+
+    ---------------
+    Reply to 98020014721306 on 2023-08-23T17:53:15.922Z
+
+    Sounds good
+
+
+
+---------------
+Comment ID 98020014725681 on 2023-08-21T21:05:26.425Z
+
+Making some fixes to unattached time entries (unexpected). Goal is to get into QA this week. Get it into staging the following week. Make sure PS team has viz into this (make an announcement).
+
+
+
+---------------
+Comment ID 98020014734187 on 2023-08-23T17:24:50.794Z
+
+@Brian Shen  to prep for launch content, please connect with these folks:
+Help Content & In App Copy: @Jenna Fletcher
+Product marketing: @Willy Thomas or @Andy McCotter-Bicknell
+Internal Enablement: @D'Andre Crump @Devin Stoker
+
+
+
+---------------
+Comment ID 98010010466704 on 2023-08-23T17:24:50.950Z
+
+Because this task is now In Progress, it has been added to the Committed Roadmap.
+
+Please assign an estimated Delivery Quarter.
+
+
+
+---------------
+Comment ID 98020014734188 on 2023-08-23T17:24:50.953Z
+
+@Brendan @Lucinda Nixon (OOO Until May 25th) @Sydney Bradley please update the Public Roadmap List with this Epic in the "Up Next" section.
+
+Please check with @Willy Thomas about the name of this feature.
+
+Thank you!
+
+
+
+    ---------------
+    Reply to 98020014734188 on 2023-08-25T12:55:35.218Z
+
+    @Brendan do you want me to add this one to the public roadmap? I'm not sure who owns this one - Brian?
+
+Would love to get this Automation wording updated somehow to tag in the PM assigned to the feature (though this one doesn't have an assignee) - that way the PM can reply and confirm if needs to be added!
+
+
+
+    ---------------
+    Reply to 98020014734188 on 2023-08-25T19:01:17.403Z
+
+    Would be @Anthony Creek
+
+
+
+    ---------------
+    Reply to 98020014734188 on 2023-08-28T17:22:59.753Z
+
+    I didn't realize we had a roadmap doc separate from the Canny stuff. Timesheets can be added into the "What's coming next" section. It will be in staging this week and in beta in production in a couple of weeks. So it's close.
+
+
+
+---------------
+Comment ID 98020014748623 on 2023-08-28T20:31:49.985Z
+
+Waiting on QA environment issues (RJ)
+Need code reviews on new components (Niklaas)
+
+
+
+---------------
+Comment ID 98020014844401 on 2023-09-25T23:11:19.708Z
+
+@Paulina Makles please check to make sure that localization has been considered.
+
+cc @assignees

@@ -1,0 +1,15 @@
+# FE Bloat | Reduce Interval for Pendo Calls
+
+![](https://t333.s.clickup-attachments.com/t333/bc8916fa-ddbc-4ae3-9ade-e944e778f56b/image.png)R
+
+  
+
+* * *
+
+  
+
+Avg size of the call seems to be around 500kb.
+
+  
+
+DD dashboard - [https://app.datadoghq.com/dashboard/vex-yja-vwk/be-api-latency-temp?refresh\_mode=sliding&from\_ts=1694548730305&to\_ts=1695153530305&live=false&tile\_focus=4866914821060682](https://app.datadoghq.com/dashboard/vex-yja-vwk/be-api-latency-temp?refresh_mode=sliding&from_ts=1694548730305&to_ts=1695153530305&live=false&tile_focus=4866914821060682)

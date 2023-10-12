@@ -129,3 +129,8 @@ CLICKUP_UPDATE_TASK_ASSIGNEE_PROMPT = """
     Remove 67823487 as assignee from task jin34ji4 -> {{"task_id": "jin34ji4", "operation": "rem", "users": [67823487]}}
     *IMPORTANT*: Users id should always be ints. 
     """
+
+CLICKUP_QUESTION_ANSWER_PROMPT = """
+    This tool is a wrapper around clickup's API, useful when you need to answer a question about a task. Use this tool if no other tool matches the user's query properly. Given an open ended question about a clickup task, call this tool to answer the question based on the task data.  Create a request with the following format:
+    payload = {{"question": "Which subtasks are still open for this task?", "task_id": "189304838920"}}
+    """
