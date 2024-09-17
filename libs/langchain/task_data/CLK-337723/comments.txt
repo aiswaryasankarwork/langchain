@@ -1,0 +1,194 @@
+
+---------------
+Comment ID 98020014807325 on 2023-09-13T20:36:18.213Z
+
+The goal here is obviously to just reduce the number of calls. 
+
+
+
+---------------
+Comment ID 98020014809000 on 2023-09-14T09:01:04.643Z
+
+Unfortunately this solution was the only reliable way we could ever figure out if the user is on or offline. The browser provides an API to do this but it would be extremely buggy - it would often report users as being offline when in fact they were online. It also only reports if the user is connected to a LAN, not that they have internet access.
+
+So after a lot of trial and error we ended up with a solution of making a network request for our favicon. However that didn't work if we were having an outage and that endpoint went down. So then we switched it to googles favicon, but sometimes that would be blocked by the users network. So we ended up with this hybrid approach where we race the 2 favicons, and if one of them succeeds we indicate the user is online, if both fail then the user is offline. 
+
+The favicons are only 1.2kb + 1.5kb so not big (potentially we could optimise by making a request that's a single byte), and we cancel the other request as soon as one of them succeeds, so it's about as performant as it can be while also still being accurate.
+
+
+
+---------------
+Comment ID 98020014811232 on 2023-09-14T19:06:18.205Z
+
+@Matt Lewis I wonder if we could leverage our WS ping-pong to figure out if we are online and connected. This way we avoid making other network calls.
+
+
+
+---------------
+Comment ID 98020014811980 on 2023-09-14T21:32:31.902Z
+
+This would be fantastic, @Arnab Karmakar assigning you to take a second pass.
+
+ One other thing we should do if we can't do it via WS we should delay the call to favicon on a successful XHR call? unsure how timing works for this favicon stuff but assume we can delay the call to XHR if we have any API success
+
+
+
+---------------
+Comment ID 98020014811989 on 2023-09-14T21:34:05.228Z
+
+But the other obvious win would be to change from using the favicons to 1PX by 1PX images or some other content thats a byte
+
+
+
+---------------
+Comment ID 98020014813295 on 2023-09-15T07:57:58.963Z
+
+@Matt Lewis I wonder if we could leverage our WS ping-pong to figure out if we are online and connected. This way we avoid making other network calls.
+We tried that approach as well - if there's an outage on the WS server then it would tell every user they're offline. Likewise, if the users IT department blocks websockets then it would also tell the user they're offline. We need to connect to a resource that is highly available and unlikely to be blocked which is why an image on a CDN works so well.
+
+
+
+---------------
+Comment ID 98020014813320 on 2023-09-15T08:04:41.606Z
+
+@Matt Lewis My understanding is, if WS is blocked, some of the features on our application wont work. e.g, Global search, docs are some of them that wont work without WS. In such scenario, what is the point of showing users online when we are partially down? I think some of the notification also come via WS.
+
+HEAD & OPTIONS call are cheaper than other HTTP request. Would that be better alternative?
+
+
+
+    ---------------
+    Reply to 98020014813320 on 2023-09-15T08:24:09.182Z
+
+    CleanShot 2023-09-15 at 09.16.58.pngWe put the whole app into readonly mode though when we think the user is offline and would block things that have no dependency on websockets e.g. editing task fields, posting comments etc. We already lived that hypothetical when we tried this approach a few years back and users were furious 
+
+HEAD & OPTIONS call are cheaper than other HTTP request. Would that be better alternative?
+We tried that as well but there were still some reliability issues which is why we ended up going with loading an image
+
+
+
+    ---------------
+    Reply to 98020014813320 on 2023-09-15T08:28:18.957Z
+
+    @Hari Rajagopalan It looks like all my obvious ideas were already tried. I don't think it makes sense to go the route already tested.
+
+@Matt Lewis Do you remember issues with the HEAD and OPTIONS call?
+
+
+
+    ---------------
+    Reply to 98020014813320 on 2023-09-15T08:29:49.584Z
+
+    Unfortunately not, and it looks like the associated clickup tasks with more info have been deleted 
+
+
+
+---------------
+Comment ID 98020014814366 on 2023-09-15T16:00:04.329Z
+
+@Matt Lewis What do you think about the idea of using HTTP_INTERCEPTORS and listening to our own network calls (all of them)? In an active tab (with users actively using our web application), there will always be some network calls going out. Was this idea tried or do you see any issues with this approach?
+
+
+
+    ---------------
+    Reply to 98020014814366 on 2023-09-15T17:01:48.001Z
+
+    We already have an interceptor that doesn't make the network request at all if we know the user is offline so it would be kind of hard to do: https://github.com/time-loop/clickup_frontend/blob/44a8190aebe7b299ee5255cb75a64f8c182d0c9b/libs/core/state/src/lib/services/offline-http-interceptor/offline-http-interceptor.service.ts#L120
+
+I had a think about it and what about if we do a hybrid approach - we check for the websocket connection status, and then if it says we're offline we check via the favicon to be completely sure?
+
+
+
+    ---------------
+    Reply to 98020014814366 on 2023-09-15T17:37:54.037Z
+
+    That's a good idea
+
+
+
+---------------
+Comment ID 98020014825906 on 2023-09-19T19:04:18.320Z
+
+I saw in another thread online someone uses this gif which is a bit smaller than ours: https://www.google-analytics.com/__utm.gif
+
+image.png
+
+
+
+    ---------------
+    Reply to 98020014825906 on 2023-09-19T19:05:52.386Z
+
+    Why does our favicon have anything to do with our service (isn't this just a publically hosted file?)
+
+
+
+    ---------------
+    Reply to 98020014825906 on 2023-09-19T19:06:13.767Z
+
+    cc @Matt Lewis 
+
+
+
+    ---------------
+    Reply to 98020014825906 on 2023-09-19T19:06:45.293Z
+
+    I think we should stick with one public file (in our own cloudfront/s3 bucket) that's really small 
+
+
+
+    ---------------
+    Reply to 98020014825906 on 2023-09-20T08:59:16.949Z
+
+    I think we should stick with one public file (in our own cloudfront/s3 bucket) that's really small 
+I just dug through the git history to find out why we were using the google favicon as well - previously we were connecting to the clickup API to load our favicon instead of our CDN:
+https://github.com/time-loop/clickup_frontend/commit/f779afdbc43a596045e0bfadf03c53a99b93014e
+
+Obviously that's bad, as if our API is down it tells the user they're offline, so we added the google favicon as a backup. But since that commit we connect to the clickup CDN instead, the only time that would be down is during an AWS outage which is extremely unlikely, and if that happens the user isn't going to be able to do anything on the app anyways (plus half the internet would be down )
+
+So I think we can safely change this:
+https://github.com/time-loop/clickup_frontend/blob/12d5b3239db13d31c0b50ccef4ec0912044ecee0/libs/core/state/src/lib/services/connection.service.ts#L72-L78
+
+to:
+const faviconCheck$ = canLoadImage(faviconUrl)
+
+What's surprising to me though is somehow our favicon gets bigger when served through the CDN than how it is on disk
+
+On disk it's 534 bytes:
+CleanShot 2023-09-20 at 09.57.52.png
+But chrome tells me it's 1.1kb:
+CleanShot 2023-09-20 at 09.58.12.png
+We don't do any kind of compression when uploading to the CDN, nor should the CDN be doing any compression of images, so I have no idea how that's happening
+
+
+
+    ---------------
+    Reply to 98020014825906 on 2023-09-20T18:12:30.727Z
+
+    @Matt Lewis Let me know what you think about this change https://github.com/time-loop/clickup_frontend/pull/38413
+
+
+
+---------------
+Comment ID 98020014830101 on 2023-09-20T18:34:28.025Z
+
+arnabk/CLK-337712/connection-service-refactor preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014836160 on 2023-09-22T02:41:24.273Z
+
+arnabk/CLK-337712/connection-service-refactor preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014836248 on 2023-09-22T04:07:09.816Z
+
+arnabk/CLK-337712/connection-service-refactor preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014879555 on 2023-10-05T00:43:16.756Z
+
+arnabk/CLK-337712/connection-service-refactor preview built. View QA.  View Staging. 
+
+

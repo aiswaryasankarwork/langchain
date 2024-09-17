@@ -1,0 +1,29 @@
+# Investigate task description slow loading (& with cached data)
+
+There is a delay on opening a task between when the /task-v3/experience/tasks/:taskId API is called and when the description is rendered on the page, sometimes as much as 1 second later.
+
+  
+
+Determine how we can optimize the flow to render the description as soon as the data is available.
+
+  
+
+[](https://app.clickup.com/333/v/dc/ad-933209/ad-2739141)
+
+  
+
+~~Bonus points:~~
+
+*   ~~Determine if we can show the description as html without initializing the full quill editor until the user Clicks into the description.~~
+
+- There is a discussion about whether to show the description as HTML without initializing the full quill editor until the user clicks into it. It is mentioned that this change has implications and tradeoffs.
+- There is a request for profiles or videos to compare and contrast the task view.
+- The focus for this task is on v3.
+- There are previews built for QA and staging.
+- Additional changes are being considered for the task, including re-looking at the Docs render scheduling.
+- The task is put in review and requests QA review from multiple team members.
+- Questions are asked about a video, but it is clarified that the spinning loading indicator is not an issue.
+- The task is ready for QA and there is a request for help from a task squad QA member.
+- There is a request for testing with different size tasks.
+- There is a request for QA review from specific team members.
+- There is a video with questions, but it is determined that it is not an issue and the task is ready to be merged.

@@ -1,0 +1,413 @@
+---------------
+Comment ID 98020014805507 on 2023-09-13T15:31:31.456Z
+
+I'm not seeing anything obvious to reduce the interval within the configuration settings that we apply to the initialize function.
+
+Here's the pendo guide I'm looking at.
+
+I'm not sure I understand the first line, The Pendo Agent is built with your application's configuration settings included into it . Where are these configuration settings defined?
+
+I see @Brian Kwon and @Dylan Israel 's name around the pendo load files. Do you guys happen to know if there's a configuration to reduce the number of guide calls?
+
+We're trying to solve the issue where pendo is calling /data/guide.json  nearly 1M times a day. This seems excessive.
+
+
+
+    ---------------
+    Reply to 98020014805507 on 2023-09-13T15:33:28.088Z
+
+    I also see @Matt Lewis's name in these parts. Do you have any context here?
+
+
+
+    ---------------
+    Reply to 98020014805507 on 2023-09-13T15:46:02.695Z
+
+    @Bradley I worked on some of this with @Marcin Warpechowski . The only thing we tried to lower this is to leverage the preferMutationObserver but that was a failure.
+
+By default, Pendo Scrolls the DOM in 500ms intervals. I don't know a way to update or change that, but you might be able to change the internal workings of pendo. Similar to what was done with patchPendoSizzle function. Might be able to put a delay in there as that is the dom check.
+
+Also, one item I have suggested in the past is to define the requirements of when we want this on and off. You do have the ability to disable Pendo and turn it back on when needed. 
+
+
+
+    ---------------
+    Reply to 98020014805507 on 2023-09-13T15:52:08.276Z
+
+    Thanks @Dylan Israel! This is really helpful. I'll take a look at the internals!
+
+Silly question, when running locally (pointing to staging) I'm not seeing any of these calls, there's something obvious I'm missing.
+
+Do I need to toggle something to get pendo working locally?
+
+
+
+
+    ---------------
+    Reply to 98020014805507 on 2023-09-13T15:55:20.193Z
+
+    @Bradley if window.pendo is defined you have access to it. I know there is a flag on in staging for a performance test being performed with a potential replacement so 50% chance you have it on vs 50% off. If it is not defined you may need to force enrollment to off  for the flag exp_chameleon_over_pendo 
+
+
+
+---------------
+Comment ID 98020014809743 on 2023-09-14T15:03:55.167Z
+
+Removing myself and adding @Ben Walsh as he will be owning pendo work moving forward
+
+cc: @Hari Rajagopalan 
+
+
+
+---------------
+Comment ID 98020014809943 on 2023-09-14T15:42:13.787Z
+
+@Ben Walsh Might be helpful. Cross-posting here.
+
+Okay, so I have a solution for this, but requires a some testing and adding a # to the route.Pendo Loads by default on every route change. If we add these two lines of code. 
+
+ignoreHashRouting - If set to true, the Agent will strip url fragments from the url used for events (everything after a # symbol). Deprecated: new usages to edit the url for events should use the location api.
+
+Note this mentions it is deprecated and the Location API should be used. I'd look into that and we may not have to change our routes.
+Demo Clip
+CLIENT_APP_ROUTES
+
+export const appRoutes: ModuleWithProviders<RouterModule> =
+  RouterModule.forRoot(routes, {
+    enableTracing: false,
+    // add this below
+    useHash: true,
+  });
+
+PENDO INITIALIZE
+    window.pendo?.initialize({
+      visitor: {
+        id: isNonProd ? '_' + user.id : user.id, // Required if user is logged in
+        email: user.email,
+        full_name: user.username,
+      },
+      // add this below
+      ignoreHashRouting: true,
+    });
+
+
+
+
+---------------
+Comment ID 98020014826589 on 2023-09-19T20:59:59.068Z
+
+@Madhuri Swarna , i think @Ben Walsh is already addressing this. @Ben Walsh freel free toc lose this out if yes
+
+
+
+    ---------------
+    Reply to 98020014826589 on 2023-09-20T02:23:31.626Z
+
+    correct - we are taking care of this
+
+
+
+---------------
+Comment ID 98020014826590 on 2023-09-19T21:00:12.069Z
+
+I think the bigger deal than file size is the repetitive calls * file size
+
+
+
+---------------
+Comment ID 98020014830986 on 2023-09-20T21:38:03.061Z
+
+briankwon89_CLK-337140_reduce-pendo-calls preview built. View QA.  View Staging.
+
+
+---------------
+Comment ID 98020014831389 on 2023-09-20T23:10:00.664Z
+
+@Hari Rajagopalan do we have some numbers on how much this API is causing app degradation?
+
+@Brian Kwon has a possible solution to our API problems but it will degrade pendo's usefulness quite a bit.
+
+I'm having him run some tests to see what the value is to the fix right now on his PR branch
+
+I've also reached out to pendo tech support to see if they have any other input on this issue
+
+cc: @Greg Pelander 
+
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-20T23:13:36.275Z
+
+    It's one of our worst offenders. For example, just clicked on 4 things (20%+ our traffic is going to pendo calls ) wayy to high for something that should be cached
+image.png
+
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-20T23:16:49.312Z
+
+    Once you've already loaded a view, and are doing route changes it's even worse: 
+image.png
+
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-20T23:17:07.191Z
+
+    50% of our data resources, and 1/4th of resources go to pendo
+
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-21T01:34:07.162Z
+
+    without_changes_1.pdfwithout_changes_2.pdfwith_changes_1.pdfwithout_changes_3.pdfwith_changes_2.pdfwith_changes_3.pdf@Hari Rajagopalan I had @Brian Kwon work on testing this and this is where we landed.  Attached are the light house tests with and without his changes
+
+also here are his results of total network load time with and without his changes
+<with changes>
+1. 251+2+2+105+2+2+2 = 366 ms
+2. 221+1+1+2+2+2+1 = 230 ms
+3. 229+2+2+2+2+3+4 = 244 ms
+AVG = 280 ms
+<without changes>
+1. 329+4+4+3+5+5+5+5+5+340+262+244+257+384+267+252+269+338+240+330+244+16 = 3808 ms
+2. 266+2+2+3+3+3+3+3+3+253+255+265+268+217+246+352+425+259+299+254+251+1 = 3633 ms
+3. 297+1+2+2+3+3+3+3+3+203+248+238+281+250+254+250+255+247+246+234+252+1 = 3276 ms
+
+Here is the clip from his testing as well
+
+TL;DR; we improved the number of network calls but not initial load perforamance
+
+We definitely have cut down the total time and payload on the network but I'm concerned that his fix is breaking a critical piece of pendo functionality.  The way that pendo is built it seems as if they need to hit this URL on every route change to be able to properly target location based pendo guides, a feature that we use quite a bit.  I've reached out to tech support and am waiting on a response to if this is the case or if they have other work arounds for this.
+
+Do we have a read on how much of a user impact this would get us vs. the user impact we get from leaving pendo as is?
+
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-21T01:57:12.582Z
+
+    i don’t have a good read yet but it seems significant network load on every request and since we’re seeing blocked xhr calls for 40 percent of our slowdown it should make a difference. i don’t want to limit pendo long run but i think our approach should be to reduce this call and then see if there’s an alternative way to call pendo 
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-21T01:58:02.304Z
+
+    if there isn’t in a few weeks, we can look to re enabling it this way but i doubt everyone who uses pendo makes a 250kb call every page to a 3p
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-21T01:58:32.710Z
+
+    perhaps something we can escape to will may @Shailesh Kumar  or if we have another contact there 
+
+
+    ---------------
+    Reply to 98020014831389 on 2023-09-21T04:36:54.864Z
+
+    Yeah, the main other thing is more than initial load, we're looking at route changes and pendo is a majority of that ; less concerned about initial load than i am about every route change.
+
+
+
+---------------
+Comment ID 98020014835192 on 2023-09-21T21:26:25.653Z
+
+ sharing an example of how many pendo calls I'm running into 
+image.png
+
+
+
+---------------
+Comment ID 98020014835463 on 2023-09-21T22:29:44.976Z
+
+Update here:
+
+Got a response from pendo support with no immediately helpful information.
+
+Responded to their questions, asked for a meeting, and roped in @Shailesh Kumar , @Greg Pelander , @Olga Osadcha , and Blair (VP from pendo) for visibility
+
+Thread with support is here
+
+I will continue to post updates as we learn more here.  For now we are holding off on merging in @Brian Kwon 's PR
+
+
+
+---------------
+Comment ID 98020014836033 on 2023-09-22T01:09:23.701Z
+
+Update with some more testing thanks to @Brian Kwon  
+
+We ran three tests on our application: 
+one with pendo installed as it is today, one with @Brian Kwon 's changes, and one without pendo installed.  We have attached the results in a screenshot. You can also view them in this sheet
+
+They use the same performance markers that we track in DD to assess the applications ability to 1. start up, 2. load list view, 3. load task view, and 4. load board view.
+
+I'm not seeing as large of a difference as I would expect between the current state of pendo and without pendo installed on our app. I'm also open to other thoughts or other ways we can stress test these changes locally.
+
+we're still waiting to hear back from Pendo support to get an assessment of what's best to try next
+
+Screenshot 2023-09-21 at 7.00.04 PM.png
+
+
+
+    ---------------
+    Reply to 98020014836033 on 2023-09-22T03:46:05.720Z
+
+    @Ben Walsh, @Olga Osadcha and I talked to a few of the VPs of Product as well if you need the extra bump. Maybe we can even ask Will May? 
+
+
+
+    ---------------
+    Reply to 98020014836033 on 2023-09-22T15:30:11.833Z
+
+    @Ben Walsh , I think we can agree with @Greg Pelander that the Pendo with changes is 500ms faster and we should atleast merge that version? 
+
+
+
+    ---------------
+    Reply to 98020014836033 on 2023-09-22T16:00:26.543Z
+
+    @Hari Rajagopalan from a strictly technical perspective, yes. But there are some major product concerns with those changes -- we'll need alignment here.
+
+I also want to figure out why we're not seeing any change from removing Pendo. Something is wrong with our data.
+
+
+
+---------------
+Comment ID 98020014836040 on 2023-09-22T01:13:27.218Z
+
+weird why is the no pendo slower on average than with pendo - how many times did you run this? we should have enough data. i guess either way it seems like we save 500ms on pendo with changes? 
+
+
+---------------
+Comment ID 98020014839729 on 2023-09-23T00:04:38.342Z
+
+Thread with testing details as of today 
+
+
+
+    ---------------
+    Reply to 98020014839729 on 2023-09-23T00:06:02.625Z
+
+    Screenshot 2023-09-22 at 12.28.40 PM.pngResults from a local build pointed at staging with hardware throttling.  Clip includes @Brian Kwon 's work
+https://t333.s.clickup-attachments.com/t333/9ad65c23-a287-48ad-847a-8a9a432fc64f/screen-recording-2023-09-22-11%3A20.webm?open=true
+Results inconclusive
+
+
+
+    ---------------
+    Reply to 98020014839729 on 2023-09-23T00:07:16.641Z
+
+    Screenshot 2023-09-22 at 2.51.42 PM.pngResults with production build using two PR branches.  One with pendo installed one without. no hardware throttling.
+
+Results - no pendo 10% faster
+
+
+
+    ---------------
+    Reply to 98020014839729 on 2023-09-23T00:08:32.027Z
+
+    Screenshot 2023-09-22 at 3.08.48 PM.pngResults with production build using two PR branches. One with pendo installed one without. no hardware throttling. hardware throttling 
+CPU 4x slowdown
+Hardware concurrency 4 (instead of 12)
+Results - inconclusive (with pendo slightly faster)
+
+
+
+    ---------------
+    Reply to 98020014839729 on 2023-09-23T00:09:53.136Z
+
+    My overall interpretation of these results is that we aren't seeing a meaningful difference between pendo and no pendo on our developer machines.
+
+Similar to most performance issues, the developers tend not to feel them since we use the most up to date hardware.
+
+Because of this, the only way I see getting real data to compare apples to apples is getting a sample of production user data.
+
+
+
+    ---------------
+    Reply to 98020014839729 on 2023-09-23T01:53:19.714Z
+
+    @Ben Walsh Thank you for the info. Do we know how many Pendo call happen on List view and View task since we are focusing on those? I looked at few har files from customers and they all loaded list view and I see one Pendo js call https://cdn.pendo.io/agent/static/a55d7d66-bb17-4dd8-47ee-554adf4eca7b/pendo.js . No sure what all the S entails but, if these pages doesn't have much Pendo traffic might be why we don't see much difference? Also, have we done a performance profile with and with out to see if there is any impact on the FE rendering?
+
+
+
+    ---------------
+    Reply to 98020014839729 on 2023-09-25T00:37:33.642Z
+
+    @Madhuri Swarna I think there is only one pendo call per route loaded on all routes so I think it would be the same per route
+
+In terms of previous work to assess impact on the FE rendering, here are two tasks with some of that work
+8x8uu2mu8
+8x8uu22y8
+
+
+
+---------------
+Comment ID 98020014883217 on 2023-10-05T21:29:25.812Z
+
+Working on re-ramping the experiment with the new flag in production
+
+Testing new flag with results clip
+
+https://t333.s.clickup-attachments.com/t333/92323831-9c6b-4f0e-8a51-db1f55cbe67c/screen-recording-2023-10-05-15%3A27.webm?open=true
+
+
+
+---------------
+Comment ID 98020014883503 on 2023-10-05T22:31:40.232Z
+
+Hey there @assignees!
+
+Please ensure we fill out the required Custom Fields on this task for Hotfix Tracking: 
+
+ Squad – Should be set already, confirm the bug is set to the properly assigned squad
+ Release # – What Production Release is this related to?
+ Build Blocker – Is this a Build Blocker (which will also be hotfixed) or a simple hotfix need? 
+If it is determined we can allow the change to pass through to production please update the field to pass through; if the blocker was not a blocker, please update the field accrodingly
+ PR Lineage: Set the field with the offending commit URL
+[TS] Environment(s): What environment did this affect?
+Root Cause Category: Choose the category the bug's root cause falls under
+Root Cause Explanation: Describe what caused the bug to occur?
+Resolution: How did we fix the bug? (Select if this was a Hotfix, Revert, Feature Flag Switch, or other, and describe briefly below)
+Repository: Select the affected repository/repositories
+Release Prevention Category: Select all the applicable ways we can improve our prevention efforts for bugs of this type
+Prevention Explanation: Describe how we can prevent the bug from recurring in the future. 
+Testing Improvement Task URL: If Unit or Integration testing changes are needed, please create/provide the task URL in this field and add it to a Sprint
+
+Since this is a Stage-1/Prod Hotfix please fill out the following Custom Fields:
+Related Incident Number: Provide the related incident number
+Hotfix Justification: Please explain the need for this hotfix and what will occur if this isn't fixed now
+
+
+
+
+    ---------------
+    Reply to 98020014883503 on 2023-10-05T22:32:00.642Z
+
+    @Ben Walsh could u please fill out when u have a chance ?
+
+
+
+    ---------------
+    Reply to 98020014883503 on 2023-10-06T21:25:49.615Z
+
+    done
+
+
+
+---------------
+Comment ID 98020014896466 on 2023-10-10T19:45:08.221Z
+
+Hey there @assignees!
+
+It looks like we've flagged this as Not-A-Blocker. 
+
+While some of the previously requested fields no longer need answering, let's still ensure the following is taken care of:
+
+ Squad – Should be set already, confirm the bug is set to the properly assigned squad
+ Release # – What Production Release is this related to?
+ Build Blocker Category – Ensure 'Not-A-Blocker' Is Set
+[TS] Environment(s): What environment did this affect?
+Release Prevention Category: Select 'Not-A-Blocker Missed'
+Prevention Explanation: Describe how can we prevent this situation from being flagged as a blocker moving forward 

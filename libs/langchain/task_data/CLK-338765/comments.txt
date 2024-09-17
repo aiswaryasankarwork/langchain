@@ -1,0 +1,394 @@
+
+---------------
+Comment ID 98020014817134 on 2023-09-15T21:37:35.676Z
+
+Include the details about how we determined the issue and spin up a doc that gives context so somebody else can pick this up
+
+
+
+---------------
+Comment ID 98020014817146 on 2023-09-15T21:39:56.101Z
+
+could you generate a DD snapshot of how often this page API is called? Then after this fix is rolled out we can compare the load difference.
+
+It's worth noting that the same problem would also affect other Task and UserGroup APIs, but I don't know if we need to get snapshots for all of them
+
+
+
+---------------
+Comment ID 98020014817193 on 2023-09-15T21:53:01.476Z
+
+image1.85M calls weekly to this endpoint
+
+
+
+---------------
+Comment ID 98020014817644 on 2023-09-16T00:35:01.783Z
+
+@Sergiy , @Konstantin,  @Alex Yurkowski was mentioning you all saw something like this before. Was wondering if either of you had thouhgts on how to fix this. 
+
+
+
+---------------
+Comment ID 98020014817655 on 2023-09-16T00:45:01.745Z
+
+ 
+
+
+
+---------------
+Comment ID 98020014825843 on 2023-09-19T18:54:04.606Z
+
+I can't reproduce the home issue. @Nick Heinbaugh do you remember how to get it so that the network requests started multiplying?
+
+
+
+    ---------------
+    Reply to 98020014825843 on 2023-09-19T19:10:53.149Z
+
+    If you have an at mention in your homepage (at mention a doc in an assigned comment to you. For example:  
+
+
+
+    ---------------
+    Reply to 98020014825843 on 2023-09-19T19:21:02.246Z
+
+    Screenshot 2023-09-19 at 2.20.48 PM.pngthis comments section is responsible
+
+
+
+---------------
+Comment ID 98020014829642 on 2023-09-20T17:12:02.407Z
+
+buding/CLK-338765/chore_docs_improve_performance_around_mentions preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014829780 on 2023-09-20T17:35:40.300Z
+
+buding/CLK-338765/chore_docs_improve_performance_around_mentions preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014829989 on 2023-09-20T18:11:23.162Z
+
+buding/CLK-338765/chore_docs_improve_performance_around_mentions preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014837302 on 2023-09-22T15:29:44.523Z
+
+buding/CLK-338765/chore_docs_improve_performance_around_mentions preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014863204 on 2023-10-02T04:12:22.450Z
+
+@Bradley what changes have we shipped here? I'm seeing some heavy spikes to the backend to the v1/task APIs that cause latency spikes. For example here, 100+ in just about a second https://app.datadoghq.com/logs?query=%40userid%3A3745219%20%40dd.service%3Atask_service_v3%20%40endpoint%3A%22POST%20%2Ftask-v3%2Fcore%2F%3AworkspaceId%2Ftasks%2Fbulk%22%20&cols=host%2Cservice&index=&messageDisplay=inline&refresh_mode=paused&storage=hot&stream_sort=desc&viz=stream&from_ts=1696130400000&to_ts=1696133220000&live=false. I'm not sure if its mentions or not but seems like it may be new behavior since release last week.
+
+Want to make sure we are using a V3 bulk API for mentions going forward and ideally they are batched.
+
+
+
+    ---------------
+    Reply to 98020014863204 on 2023-10-02T14:31:19.569Z
+
+    I have not made it to task mentions yet. I've been focusing on Doc mentions and view mentions. I should get to task mentions this week.
+
+
+
+    ---------------
+    Reply to 98020014863204 on 2023-10-02T23:49:33.717Z
+
+    @Bradley are we sure no changes have been made? We see very large spikes to task v1 endpoints, so much so they are getting rate limited https://app.datadoghq.com/logs?query=%40status%3A429%20env%3Astaging%20%40service%3Atask_service_monolith%20&agg_q=%40referer&analyticsOptions=%5B%22bars%22%2C%22dog_classic%22%2Cnull%2Cnull%5D&cols=host%2Cservice&index=&messageDisplay=inline&refresh_mode=sliding&storage=hot&stream_sort=desc&viz=toplist&from_ts=1696202933479&to_ts=1696289333479&live=true
+
+
+
+    ---------------
+    Reply to 98020014863204 on 2023-10-02T23:49:52.260Z
+
+    Some docs seem to be causing this issue
+
+
+
+    ---------------
+    Reply to 98020014863204 on 2023-10-02T23:50:11.576Z
+
+    Such as this one . 
+
+
+
+    ---------------
+    Reply to 98020014863204 on 2023-10-03T04:46:22.884Z
+
+    @Bradley found some evidence there is a clear issue since the staging release this week. Think we need to make fixing this a blocker. Is it possibly related to your work?
+Screenshot 2023-10-02 at 9.44.39 PM.pngSeems like it is calls to v1/task at extremely high throughput from docs pages. https://app.datadoghq.com/rum/sessions?query=%40application.id%3A0eb676fa-e129-455e-b600-a92b2735835f%20%40type%3Aresource%20env%3Astaging%20%40resource.url_path_group%3A%22%2Ftasks%2Fv1%2Ftask%2F%3F%22&agg_q=%40view.name&cols=&sort_m=&sort_t=&top_n=100&top_o=top&viz=timeseries&x_missing=true&from_ts=1695098312988&to_ts=1696307912988&live=true
+
+We should not be using v1/task going forward at all. We should leverage the v3 APIs, and if multiple tasks are needed we should be sure to use the bulk API.
+
+
+
+    ---------------
+    Reply to 98020014863204 on 2023-10-03T12:36:52.029Z
+
+    I'll take a look at this today @Justin Midyet and let you know my findings
+
+
+
+    ---------------
+    Reply to 98020014863204 on 2023-10-03T15:38:38.927Z
+
+    I'm still trying to identify root cause.
+
+I was able to reproduce this morning, but now when I load the doc, I'm no longer seeing the massive amount of network requests
+
+
+
+---------------
+Comment ID 98020014871983 on 2023-10-03T15:55:27.182Z
+
+Hey there @assignees!
+
+Please ensure we fill out the required Custom Fields on this task for Blocker Tracking: 
+
+ Squad – Should be set already, confirm the bug is set to the properly assigned squad
+Release # – What Production Release is this related to?
+ Build Blocker – Is this a Build Blocker (which will also be hotfixed) or a simple hotfix need? 
+If it is determined we can allow the change to pass through to production please update the field to pass through; if the blocker was not a blocker, please update the field accrodingly
+PR Lineage: Set the field with the offending commit URL
+[TS] Environment(s): What environment did this affect?
+Root Cause Category: Choose the category the bug's root cause falls under
+Root Cause Explanation: Describe what caused the bug to occur?
+Resolution: How did we fix the bug? (Select if this was a Hotfix, Revert, Feature Flag Switch, or other, and describe briefly below)
+Repository: Select the affected repository/repositories
+Release Prevention Category: Select all the applicable ways we can improve our prevention efforts for bugs of this type
+Prevention Explanation: Describe how we can prevent the bug from recurring in the future. 
+Testing Improvement Task URL: If Unit or Integration testing changes are needed, please create/provide the task URL in this field and add it to a Sprint
+
+
+
+---------------
+Comment ID 98020014876317 on 2023-10-04T14:30:56.757Z
+
+@Stewart McGown , I see you are putting out a fix for this ticket.
+
+It seems like what @Justin Midyet said above is there was a regression which started making this call more.
+
+Did we identify what that was and look at reverting or fixing what caused the regression?
+
+
+
+    ---------------
+    Reply to 98020014876317 on 2023-10-04T14:42:37.449Z
+
+    We couldn't find a commit introducing a regression. The code for mentions service lookup tasks is old and seems like it is just majorly inefficient, as there isn't a bulk api for custom task ids. We've added a check for task mentions in docs, but we'll need to do the same for doc mentions as well. The particular issue was because we were hammering tasks v1 which isn't optimised at all.
+
+
+
+    ---------------
+    Reply to 98020014876317 on 2023-10-04T14:43:47.650Z
+
+    No regression found @Daniel Gornstein, see this slack thread
+
+There were a couple of docs that had several custom task ids which caused a strange loop of updating the delta ➝ fetching tasks ➝ updating the delta ➝ fetching tasks again until eventually it resolved itself
+
+
+
+
+    ---------------
+    Reply to 98020014876317 on 2023-10-04T14:44:33.657Z
+
+    Stewart patched the issue, but I will be eventually moving it away from v1 ➝ v3 bulk request
+
+
+
+
+    ---------------
+    Reply to 98020014876317 on 2023-10-04T14:50:47.154Z
+
+    Thanks for the information guys! 
+
+I wonder what caused the spike in requests on those graphs then. Seems odd.
+
+
+
+---------------
+Comment ID 98020014876373 on 2023-10-04T14:43:39.465Z
+
+smcgown/CLK-338765/exp-doc-mentions preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014876524 on 2023-10-04T15:07:33.368Z
+
+smcgown/CLK-338765/exp-doc-mentions-2 preview built. View QA.  View Staging. 
+
+
+---------------
+Comment ID 98020014877260 on 2023-10-04T17:00:52.477Z
+
+Looks good to me   thank you a lot @Bradley and @Stewart McGown !
+https://t333.s.clickup-attachments.com/t333/fc15aa90-e29d-4f7c-8a7e-c592e763621b/screen-recording-2023-10-04-09:38.webm?open=true
+in PR:
+CleanShot 2023-10-04 at 09.21.41@2x.pngCleanShot 2023-10-04 at 09.27.03@2x.png---in STG: 
+CleanShot 2023-10-04 at 09.22.21@2x.pngCleanShot 2023-10-04 at 09.26.35@2x.png
+
+
+
+---------------
+Comment ID 98020014877315 on 2023-10-04T17:07:05.882Z
+
+Slack conversation : https://click-up.slack.com/archives/C4Z4Z3AGM/p1696308645123469
+
+
+
+---------------
+Comment ID 98020014891917 on 2023-10-10T13:47:59.385Z
+
+@Bradley whats the latest here. Zeb just hit this again this weekend so this is still a build blocker.
+
+cc @Anastasiia Ihush 
+
+
+
+    ---------------
+    Reply to 98020014891917 on 2023-10-10T13:49:48.587Z
+
+    Was it possibly on an old tab? From what I understand a fixed was merged to staging by @Stewart McGown on Oct 4: https://github.com/time-loop/clickup_frontend/pull/39038
+
+
+
+    ---------------
+    Reply to 98020014891917 on 2023-10-10T13:53:51.025Z
+
+    My PR does not address normal tasks. I can put out a fix that does that as well, it only addressed custom task Ids. Tasks suffers from a similar problem
+
+
+
+    ---------------
+    Reply to 98020014891917 on 2023-10-10T13:54:54.678Z
+
+    Yes we will need the fix for tasks as well @Stewart McGown 
+
+
+
+    ---------------
+    Reply to 98020014891917 on 2023-10-10T14:38:44.227Z
+
+    Also, this task did not cause the regression. We should move any conversations to a different task.
+
+This task was just an epic that houses several smaller tasks :D 
+
+
+
+    ---------------
+    Reply to 98020014891917 on 2023-10-10T14:49:49.465Z
+
+    moving to this task 8x8uv2urx
+
+
+
+---------------
+Comment ID 98020014892554 on 2023-10-10T15:32:54.015Z
+
+Slack msg 
+
+
+
+---------------
+Comment ID 98010010484989 on 2023-10-10T19:51:58.428Z
+
+Hey there @assignees!
+
+It looks like we've flagged this as Not-A-Blocker. 
+
+While some of the previously requested fields no longer need answering, let's still ensure the following is taken care of:
+
+ Squad – Should be set already, confirm the bug is set to the properly assigned squad
+Release # – What Production Release is this related to?
+ Build Blocker Category – Ensure 'Not-A-Blocker' Is Set
+[TS] Environment(s): What environment did this affect?
+Release Prevention Category: Select 'Not-A-Blocker Missed'
+Prevention Explanation: Describe how can we prevent this situation from being flagged as a blocker moving forward 
+
+
+
+
+---------------
+Comment ID 98010010484990 on 2023-10-10T19:52:03.501Z
+
+Hey there @assignees!
+
+Please ensure we fill out the required Custom Fields on this task for Blocker Tracking: 
+
+ Squad – Should be set already, confirm the bug is set to the properly assigned squad
+Release # – What Production Release is this related to?
+ Build Blocker – Is this a Build Blocker (which will also be hotfixed) or a simple hotfix need? 
+If it is determined we can allow the change to pass through to production please update the field to pass through; if the blocker was not a blocker, please update the field accrodingly
+PR Lineage: Set the field with the offending commit URL
+[TS] Environment(s): What environment did this affect?
+Root Cause Category: Choose the category the bug's root cause falls under
+Root Cause Explanation: Describe what caused the bug to occur?
+Resolution: How did we fix the bug? (Select if this was a Hotfix, Revert, Feature Flag Switch, or other, and describe briefly below)
+Repository: Select the affected repository/repositories
+Release Prevention Category: Select all the applicable ways we can improve our prevention efforts for bugs of this type
+Prevention Explanation: Describe how we can prevent the bug from recurring in the future. 
+Testing Improvement Task URL: If Unit or Integration testing changes are needed, please create/provide the task URL in this field and add it to a Sprint
+
+
+
+---------------
+Comment ID 98010010484991 on 2023-10-10T19:52:24.126Z
+
+Hey there @assignees!
+
+It looks like we've flagged this as Not-A-Blocker. 
+
+While some of the previously requested fields no longer need answering, let's still ensure the following is taken care of:
+
+ Squad – Should be set already, confirm the bug is set to the properly assigned squad
+Release # – What Production Release is this related to?
+ Build Blocker Category – Ensure 'Not-A-Blocker' Is Set
+[TS] Environment(s): What environment did this affect?
+Release Prevention Category: Select 'Not-A-Blocker Missed'
+Prevention Explanation: Describe how can we prevent this situation from being flagged as a blocker moving forward 
+
+
+
+
+    ---------------
+    Reply to 98010010484991 on 2023-10-10T19:52:56.462Z
+
+    https://click-up.slack.com/archives/C4Z4Z3AGM/p1696967404575419?thread_ts=1696946720.288659&cid=C4Z4Z3AGM
+
+
+
+---------------
+Comment ID 98020014897751 on 2023-10-10T23:32:57.531Z
+
+Related defect @Bradley ? 8x8uv2tn1
+
+
+
+    ---------------
+    Reply to 98020014897751 on 2023-10-11T13:41:45.990Z
+
+    I don't think so, that appears to be something else entirely. This epic is about mentions. 
+
+
+
+---------------
+Comment ID 98020014900557 on 2023-10-11T14:39:05.842Z
+
+Status Update
+All critical over-fetching of mentions are in a dev done status
+Areas impacted were: home, tasks, and docs
+We specifically targeted comments only in this effort
+
+Moving forward 
+Continue to monitor spikes in mention requests
+investigate performance around
+task description
+doc content
+doc history
+inbox

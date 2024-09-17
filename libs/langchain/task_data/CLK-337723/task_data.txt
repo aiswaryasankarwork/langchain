@@ -1,0 +1,7 @@
+# FE | Research and Figure out if there's a modern way of figuring out if a user is online
+
+![](https://t333.s.clickup-attachments.com/t333/51401ccf-272f-4d2b-84b9-98d7f5c8a06d/image.png)We make tons of favicon calls (some to google, some to ourselves) to see if a user is online. We should reduce these un-necesaary calls as they jam us up potentially.
+
+  
+
+We also have two different kidns of ways of figuring this out
